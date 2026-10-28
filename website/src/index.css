@@ -508,3 +508,10 @@ img { max-width: 100%; height: auto; }
 .mini-panel-head { display: flex; flex-direction: column; gap: 0.3rem; padding: 0 0.3rem; }
 .mini-panel-title { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); }
 .mini-panel .badge { font-size: 0.68rem; align-self: flex-start; }
+
+/* Isolated-node chips */
+.chip-block { margin-top: 0.75rem; }
+.chip-label { font-size: 0.8rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.35rem; }
+.chips { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.chip { font-family: var(--font-mono); font-size: 0.75rem; padding: 0.15rem 0.5rem; border-radius: 9999px; background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border-color); }
+.chip-both { border: 2px solid var(--text-primary); color: var(--text-primary); font-weight: 700; }
