@@ -8,14 +8,17 @@ interface ChartCardProps {
   minWidth?: number;
   children: React.ReactNode;
   actions?: React.ReactNode;
+  /** Rendered above the chart, outside the horizontal scroll area. */
+  legend?: React.ReactNode;
 }
 
-export const ChartCard: React.FC<ChartCardProps> = ({ title, caption, sources, minWidth = 0, children, actions }) => (
+export const ChartCard: React.FC<ChartCardProps> = ({ title, caption, sources, minWidth = 0, children, actions, legend }) => (
   <figure className="card chart-card">
     <div className="chart-card-head">
       <h3 className="chart-card-title">{title}</h3>
       {actions}
     </div>
+    {legend}
     <div className="chart-scroll">
       <div style={{ minWidth }}>{children}</div>
     </div>

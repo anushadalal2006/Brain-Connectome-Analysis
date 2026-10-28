@@ -453,3 +453,23 @@ img { max-width: 100%; height: auto; }
 .section-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem; }
 .section-lead { font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1rem; max-width: 900px; }
 @media (max-width: 640px) { .chart-card { padding: 0.9rem; } }
+
+/* Home: what-we-did strip */
+.step-strip { list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; counter-reset: none; }
+.step-item { position: relative; min-width: 0; }
+.step-item:not(:last-child)::after { content: '→'; position: absolute; right: -0.85rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 1rem; }
+.step-card { display: flex; flex-direction: column; gap: 0.35rem; height: 100%; text-decoration: none; padding: 1rem 1.1rem; }
+.step-card:hover { text-decoration: none; border-color: var(--accent-blue); }
+.step-num { display: inline-flex; align-items: center; justify-content: center; width: 1.6rem; height: 1.6rem; border-radius: 9999px; background: var(--bg-tertiary); color: var(--text-primary); font-weight: 700; font-size: 0.8rem; border: 1px solid var(--border-strong); }
+.step-title { font-weight: 600; color: var(--text-primary); font-size: 0.95rem; }
+.step-text { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; }
+@media (max-width: 900px) {
+  .step-strip { grid-template-columns: 1fr; gap: 1.1rem; }
+  .step-item:not(:last-child)::after { content: '↓'; right: auto; left: 1.45rem; top: auto; bottom: -1.05rem; transform: none; }
+}
+.chart-legend { list-style: none; display: flex; flex-wrap: wrap; gap: 0.35rem 1rem; font-size: 0.78rem; color: var(--text-secondary); margin: 0.25rem 0 0.25rem 0; padding: 0; }
+.chart-legend li { display: inline-flex; align-items: center; gap: 0.4rem; }
+.chart-legend-key { display: inline-block; width: 0.8rem; height: 0.8rem; border-radius: 2px; }
+.chart-legend-line { height: 0; width: 1.2rem; border-top: 2.5px solid; border-radius: 0; }
+.chart-legend-dash { height: 0; width: 1.2rem; border-top: 2.5px dashed; border-radius: 0; }
+.chart-legend-band { opacity: 0.6; width: 1.2rem; }
