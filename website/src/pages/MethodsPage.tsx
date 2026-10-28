@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { CaveatBanner } from '../components/CaveatBanner';
 import { KaTeX } from '../components/KaTeX';
 import {
@@ -9,56 +9,46 @@ import {
   GitCommit,
   ShieldAlert
 } from 'lucide-react';
-import { ShortestPathSummary, ProvenanceData } from '../types';
+import { ShortestPathSummary, ProvenanceData, ConfigData, GlobalStatistic } from '../types';
+import { useJSON, PENDING } from '../data';
+import { PipelineDiagram } from '../components/diagrams/PipelineDiagram';
+import { ThresholdDiagram } from '../components/diagrams/ThresholdDiagram';
+import { NegativeCycleDiagram } from '../components/diagrams/NegativeCycleDiagram';
+import { V1Decision, V2Decision } from '../components/diagrams/DecisionDiagram';
 
 export const MethodsPage: React.FC = () => {
-  const [totalSubjects, setTotalSubjects] = useState(1003);
-  const [undefinedNodesA, setUndefinedNodesA] = useState(85);
-  const [undefinedNodesB, setUndefinedNodesB] = useState(74);
+  const cfg = useJSON<ConfigData>('config.json');
+  const prov = useJSON<ProvenanceData>('provenance.json');
+  const stats = useJSON<GlobalStatistic[]>('statistics_global.json');
+  const spList = useJSON<ShortestPathSummary[]>('shortest_path_summary.json');
 
-  useEffect(() => {
-    fetch(`${import.meta.env.BASE_URL}data/provenance.json`)
-      .then((r) => r.json())
-      .then((prov: ProvenanceData) => {
-        if (prov.all_subject_check?.subjects) {
-          setTotalSubjects(prov.all_subject_check.subjects);
-        }
+  const totalSubjects = prov?.all_subject_check?.subjects ?? PENDING;
+  const nPairsRow = stats?.find((r) => r.statistic === 'n_values');
+  const nPairs = nPairsRow ? Math.round(nPairsRow.A) : null;
+  const rowA = cfg && spList?.find((r) => String(r.subject) === String(cfg.subjects.A));
+  const rowB = cfg && spList?.find((r) => String(r.subject) === String(cfg.subjects.B));
+  const undefinedNodesA = rowA ? rowA.undefined : PENDING;
+  const undefinedNodesB = rowB ? rowB.undefined : PENDING;
+  const finiteA = rowA ? rowA.finite : PENDING;
+  const finiteB = rowB ? rowB.finite : PENDING;
+  const K = cfg ? cfg.density_settings.length : PENDING;
+  const primary = cfg?.config.density;
+
+  const densities = cfg && nPairs !== null
+    ? cfg.density_settings.map((d) => {
+        const m = Math.floor(d * nPairs + 0.5);
+        return { density: d.toFixed(2), edges: m, formula: `floor(${d.toFixed(2)} × ${nPairs} + 0.5) = ${m}${d === primary ? ' (primary)' : ''}`, primary: d === primary };
       })
-      .catch(() => {});
+    : [];
 
-    fetch(`${import.meta.env.BASE_URL}data/shortest_path_summary.json`)
-      .then((r) => r.json())
-      .then((spList: ShortestPathSummary[]) => {
-        const rowA = spList.find((s) => s.subject === 100206 || (s.subject as any) === '100206');
-        const rowB = spList.find((s) => s.subject === 100307 || (s.subject as any) === '100307');
-        if (rowA?.undefined) setUndefinedNodesA(rowA.undefined);
-        if (rowB?.undefined) setUndefinedNodesB(rowB.undefined);
-      })
-      .catch(() => {});
-  }, []);
-
-  const steps = [
-    { title: 'Load', desc: 'Import HCP netmats1 100-component arrays' },
-    { title: 'Validate', desc: `Verify symmetry, no NaNs, null diagonal (${totalSubjects} subjects)` },
-    { title: 'Preprocess', desc: 'Zero diagonal, preserve signed values (no 1/w)' },
-    { title: 'Build Signed Graph', desc: 'Proportional density by |w|, ties by (i, j)' },
-    { title: 'Statistics', desc: 'Descriptive distributions & edge summaries' },
-    { title: 'Metrics', desc: 'Degree, clustering, transitivity, components, strength' },
-    { title: 'BFS / DFS', desc: 'Tree reachability from source node 34 (IC035)' },
-    { title: 'Bellman–Ford', desc: 'Negative cycle detection & path divergence' },
-    { title: 'Compare', desc: 'Pairwise difference & edge overlap at d = 0.15' },
-    { title: 'Multi-Density', desc: 'K = 6 density evaluations (d = 0.05 to 0.30)' },
-    { title: 'Global-to-Local', desc: 'Link global ΔM to local node and edge alterations' },
-    { title: 'Report', desc: 'Export report.md, tables, figures & settings hash' },
-  ];
-
-  const densities = [
-    { density: '0.05', edges: Math.floor(0.05 * 4950 + 0.5), formula: 'floor(0.05 * 4950 + 0.5) = 248' },
-    { density: '0.10', edges: Math.floor(0.10 * 4950 + 0.5), formula: 'floor(0.10 * 4950 + 0.5) = 495' },
-    { density: '0.15', edges: Math.floor(0.15 * 4950 + 0.5), formula: 'floor(0.15 * 4950 + 0.5) = 743 (primary)' },
-    { density: '0.20', edges: Math.floor(0.20 * 4950 + 0.5), formula: 'floor(0.20 * 4950 + 0.5) = 990' },
-    { density: '0.25', edges: Math.floor(0.25 * 4950 + 0.5), formula: 'floor(0.25 * 4950 + 0.5) = 1238' },
-    { density: '0.30', edges: Math.floor(0.30 * 4950 + 0.5), formula: 'floor(0.30 * 4950 + 0.5) = 1485' },
+  const complexity = [
+    { step: 'Graph build (proportional density)', ds: `Array of all ${nPairs ?? PENDING} pairs, sorted`, time: 'O(E log E)', note: 'Sort the pairs by |w| (ties by i, j), keep the top m.' },
+    { step: 'BFS', ds: 'Queue (deque) + visited set', time: 'O(V + E)', note: 'Levels = BFS tree depth from the source node.' },
+    { step: 'DFS', ds: 'Explicit stack + visited set', time: 'O(V + E)', note: 'Reaches the same node set as BFS.' },
+    { step: 'Bellman–Ford', ds: 'Distance + predecessor arrays, arc list', time: 'O(V · E)', note: 'V − 1 relaxation rounds, then one more round to detect a negative cycle.' },
+    { step: 'Clustering (binary)', ds: 'Adjacency sets', time: 'O(V · d²)', note: 'Edge weights ignored; d = node degree.' },
+    { step: 'Transitivity', ds: 'Adjacency sets', time: 'O(V · d²)', note: '3 × triangles / connected triples.' },
+    { step: 'Connected components', ds: 'BFS over unvisited nodes', time: 'O(V + E)', note: 'Largest component, isolated nodes.' },
   ];
 
   return (
@@ -82,26 +72,11 @@ export const MethodsPage: React.FC = () => {
           <Layers size={20} style={{ color: 'var(--accent-blue)' }} />
           End-to-End Processing Pipeline
         </h2>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-            gap: '1rem',
-          }}
-        >
-          {steps.map((s, idx) => (
-            <div key={idx} className="card" style={{ padding: '1rem', position: 'relative' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
-                <span className="badge badge-blue mono">Step {idx + 1}</span>
-              </div>
-              <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--text-primary)', marginBottom: '0.25rem' }}>
-                {s.title}
-              </div>
-              <div style={{ fontSize: '0.775rem', color: 'var(--text-secondary)' }}>
-                {s.desc}
-              </div>
-            </div>
-          ))}
+        <p className="section-lead">
+          Every notebook cell in order, from validating all {totalSubjects} subjects to replication. Each box gives the cell number and what it does; test cells sit next to the module they check.
+        </p>
+        <div className="card chart-card">
+          <div className="chart-scroll"><div style={{ minWidth: 760 }}><PipelineDiagram /></div></div>
         </div>
       </section>
 
@@ -122,7 +97,7 @@ export const MethodsPage: React.FC = () => {
             <p>
               <strong>Proportional Density Rule:</strong> Edges are ranked by descending absolute weight <KaTeX math="|w|" />. Ties are broken deterministically by index pair <KaTeX math="(i, j)" /> in ascending order (<span className="mono">abs_desc_then_ij</span>). The number of retained edges is:
             </p>
-            <KaTeX math="m = \left\lfloor d \times 4950 + 0.5 \right\rfloor" block />
+            <KaTeX math={`m = \\left\\lfloor d \\times ${nPairs ?? 'N'} + 0.5 \\right\\rfloor`} block />
             <p>
               <strong>Negative Edges Preserved:</strong> Negative correlation weights are retained with their signed magnitude intact. No reciprocal or <KaTeX math="1/w" /> transformations are applied.
             </p>
@@ -132,7 +107,7 @@ export const MethodsPage: React.FC = () => {
         <div className="card">
           <h2 className="card-title">
             <Code2 size={20} style={{ color: 'var(--accent-blue)' }} />
-            Density Settings & Edge Counts (K = 6)
+            Density Settings & Edge Counts (K = {K})
           </h2>
           <div className="table-container" style={{ marginTop: '0.5rem' }}>
             <table>
@@ -145,7 +120,7 @@ export const MethodsPage: React.FC = () => {
               </thead>
               <tbody>
                 {densities.map((row, i) => (
-                  <tr key={i} style={row.density === '0.15' ? { background: 'var(--bg-tertiary)', fontWeight: 600 } : {}}>
+                  <tr key={i} style={row.primary ? { background: 'var(--bg-tertiary)', fontWeight: 600 } : {}}>
                     <td className="mono">{row.density}</td>
                     <td className="mono">{row.edges}</td>
                     <td className="mono" style={{ fontSize: '0.8rem' }}>{row.formula}</td>
@@ -157,12 +132,22 @@ export const MethodsPage: React.FC = () => {
         </div>
       </section>
 
+      {/* Thresholding illustration */}
+      <section className="card chart-card" style={{ marginBottom: '2.5rem' }}>
+        <h2 className="card-title">How proportional thresholding works</h2>
+        <div className="chart-scroll"><div style={{ minWidth: 600 }}><ThresholdDiagram nPairs={nPairs ?? PENDING} /></div></div>
+        <p className="chart-caption">
+          The same rule is applied to both subjects at every density, so both graphs always have exactly m edges. Negative edges are kept with their sign; no 1/w or other conversion is applied.
+        </p>
+      </section>
+
       {/* Bellman-Ford Negative Cycle Mechanics */}
       <section className="card" style={{ marginBottom: '2.5rem', borderLeft: '4px solid var(--badge-partial-border)' }}>
         <h2 className="card-title" style={{ color: 'var(--badge-partial-text)' }}>
           <AlertTriangle size={20} />
           Why Shortest Paths are Undefined (Reachable Negative Cycles)
         </h2>
+        <div className="methods-bf-grid">
         <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           <p>
             In standard brain graph analysis, negative correlations are frequently discarded or arbitrarily converted to positive distances using ad-hoc inversions such as <KaTeX math="1/w" /> or <KaTeX math="1 - w" />. This project rejects such transformations and keeps original signed weights as edge costs.
@@ -175,8 +160,15 @@ export const MethodsPage: React.FC = () => {
             Because the cost of traversing this 2-cycle is strictly negative (<KaTeX math="2w < 0" />), any path originating from or reaching <KaTeX math="u" /> can traverse this cycle an arbitrary number of times to reduce its total cost towards <KaTeX math="-\infty" />.
           </p>
           <p>
-            Consequently, the <strong>Bellman–Ford algorithm</strong> terminates with status <span className="mono">negative_cycle</span>. Distances to all {undefinedNodesA} nodes reachable in Subject A and {undefinedNodesB} nodes reachable in Subject B are mathematically undefined. Distance is only finite (0) to the source itself, while unreachable components remain disconnected (<KaTeX math="\infty" />). No shortest-path comparison is reported.
+            Consequently, the <strong>Bellman–Ford algorithm</strong> terminates with status <span className="mono">negative_cycle</span>. Distances to all {undefinedNodesA} nodes reachable in Subject A and {undefinedNodesB} nodes reachable in Subject B are undefined, including the source itself (it can also go round the cycle). Finite distances: {finiteA} in A and {finiteB} in B. Nodes outside the source's component stay unreachable (<KaTeX math="\infty" />). No shortest-path comparison is reported.
           </p>
+        </div>
+          <figure style={{ margin: 0 }}>
+            <NegativeCycleDiagram />
+            <figcaption className="chart-caption" style={{ textAlign: 'center' }}>
+              Blue dashed arcs = a negative edge (rule 6). Going round u → v → u lowers the cost by 2|w| every time, so no shortest distance exists.
+            </figcaption>
+          </figure>
         </div>
       </section>
 
@@ -202,7 +194,7 @@ export const MethodsPage: React.FC = () => {
               2. Sign-Consistency Score
             </div>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
-              Fraction of non-zero delta observations sharing the dominant sign across all <KaTeX math="K = 6" /> densities:
+              Fraction of non-zero delta observations sharing the dominant sign across all <KaTeX math={`K = ${K}`} /> densities:
             </p>
             <KaTeX math="S_M = \frac{\max(n^+, n^-)}{n^+ + n^-}" block />
           </div>
@@ -214,7 +206,8 @@ export const MethodsPage: React.FC = () => {
             <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
               Fraction of densities where edge <KaTeX math="e" /> is retained, and differential retention <KaTeX math="\Delta P(e)" />:
             </p>
-            <KaTeX math="P_A(e) = \frac{\text{count}_A(e)}{K}, \quad \Delta P(e) = P_A(e) - P_B(e)" block />
+            <KaTeX math="P_A(e) = \frac{\text{count}_A(e)}{K}" block />
+            <KaTeX math="\Delta P(e) = P_A(e) - P_B(e)" block />
           </div>
         </div>
       </section>
@@ -232,7 +225,7 @@ export const MethodsPage: React.FC = () => {
             </div>
             <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
               <p>
-                <strong>Rule:</strong> <span className="mono">setting-consistent</span> iff all <KaTeX math="K = 6" /> deltas share one sign beyond machine epsilon <KaTeX math="\varepsilon = 10^{-9}" /> (<KaTeX math="S_M = 1" /> and <KaTeX math="n_{\text{zero}} = 0" />).
+                <strong>Rule:</strong> <span className="mono">setting-consistent</span> iff all <KaTeX math={`K = ${K}`} /> deltas share one sign beyond machine epsilon <KaTeX math="\varepsilon = 10^{-9}" /> (<KaTeX math="S_M = 1" /> and <KaTeX math="n_{\text{zero}} = 0" />).
               </p>
               <p>
                 <strong>No Difference:</strong> iff all <KaTeX math="|\Delta| \le \varepsilon" />.
@@ -262,10 +255,54 @@ export const MethodsPage: React.FC = () => {
                 <strong>Partially Consistent:</strong> Introduced for metrics where all non-negligible differences share one sign, but gaps at some densities are under 1%.
               </p>
               <p>
-                <strong>Setting-Consistent:</strong> Strictly non-negligible same sign at all <KaTeX math="K = 6" /> densities.
+                <strong>Setting-Consistent:</strong> Strictly non-negligible same sign at all <KaTeX math={`K = ${K}`} /> densities.
               </p>
             </div>
           </div>
+        </div>
+        <h3 style={{ fontSize: '1rem', fontWeight: 600, margin: '1.75rem 0 0.75rem', color: 'var(--text-primary)' }}>
+          The two rules as decision diagrams (frozen v1 shown beside protocol v2)
+        </h3>
+        <div className="grid-2">
+          <div>
+            <div style={{ marginBottom: '0.5rem' }}><span className="badge badge-neutral">Frozen v1</span></div>
+            <V1Decision />
+          </div>
+          <div>
+            <div style={{ marginBottom: '0.5rem' }}><span className="badge badge-consistent">Protocol v2 (primary)</span></div>
+            <V2Decision />
+          </div>
+        </div>
+        <p className="chart-caption">
+          v1 has no tolerance, so a tiny gap at one density decides the label; v2 sets aside differences under 1% and adds the &quot;partially consistent&quot; label. Colours: green setting-consistent, amber partially consistent, purple/pink construction-sensitive, grey no difference.
+        </p>
+      </section>
+
+      {/* Algorithms, data structures and complexity */}
+      <section className="card" style={{ marginTop: '2.5rem' }}>
+        <h2 className="card-title">
+          <Code2 size={20} style={{ color: 'var(--accent-blue)' }} />
+          Algorithms, Data Structures and Time Complexity
+        </h2>
+        <p className="section-lead">
+          V = number of nodes, E = number of edges kept at the chosen density. All algorithms run on the unweighted adjacency except Bellman–Ford, which uses the signed weights as arc costs.
+        </p>
+        <div className="table-container">
+          <table>
+            <thead>
+              <tr><th>Step</th><th>Data structure</th><th>Time</th><th>Note</th></tr>
+            </thead>
+            <tbody>
+              {complexity.map((r) => (
+                <tr key={r.step}>
+                  <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{r.step}</td>
+                  <td>{r.ds}</td>
+                  <td className="mono" style={{ whiteSpace: 'nowrap' }}>{r.time}</td>
+                  <td>{r.note}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
     </div>
