@@ -1,19 +1,23 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 
-// Pages
-import { Home } from './pages/Home';
-import { DataPage } from './pages/DataPage';
-import { MethodsPage } from './pages/MethodsPage';
-import { SingleNetworksPage } from './pages/SingleNetworksPage';
-import { ComparisonPage } from './pages/ComparisonPage';
-import { MultiDensityPage } from './pages/MultiDensityPage';
-import { ReplicationPage } from './pages/ReplicationPage';
-import { VerificationPage } from './pages/VerificationPage';
-import { LimitationsPage } from './pages/LimitationsPage';
+// Pages are code-split: each loads on first visit.
+const Home = lazy(() => import('./pages/Home').then((m) => ({ default: m.Home })));
+const DataPage = lazy(() => import('./pages/DataPage').then((m) => ({ default: m.DataPage })));
+const MethodsPage = lazy(() => import('./pages/MethodsPage').then((m) => ({ default: m.MethodsPage })));
+const SingleNetworksPage = lazy(() => import('./pages/SingleNetworksPage').then((m) => ({ default: m.SingleNetworksPage })));
+const ComparisonPage = lazy(() => import('./pages/ComparisonPage').then((m) => ({ default: m.ComparisonPage })));
+const MultiDensityPage = lazy(() => import('./pages/MultiDensityPage').then((m) => ({ default: m.MultiDensityPage })));
+const ReplicationPage = lazy(() => import('./pages/ReplicationPage').then((m) => ({ default: m.ReplicationPage })));
+const VerificationPage = lazy(() => import('./pages/VerificationPage').then((m) => ({ default: m.VerificationPage })));
+const LimitationsPage = lazy(() => import('./pages/LimitationsPage').then((m) => ({ default: m.LimitationsPage })));
+
+const PageLoading: React.FC = () => (
+  <div className="container" style={{ padding: '3rem 1.25rem', color: 'var(--text-muted)' }}>Loading page…</div>
+);
 
 export const App: React.FC = () => {
   return (
@@ -22,6 +26,7 @@ export const App: React.FC = () => {
         <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
           <Navbar />
           <main style={{ flex: 1 }}>
+            <Suspense fallback={<PageLoading />}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/data" element={<DataPage />} />
@@ -34,6 +39,7 @@ export const App: React.FC = () => {
               <Route path="/limitations" element={<LimitationsPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
+            </Suspense>
           </main>
           <Footer />
         </div>

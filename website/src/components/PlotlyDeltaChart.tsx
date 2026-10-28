@@ -1,5 +1,5 @@
 import React from 'react';
-import Plot from 'react-plotly.js';
+import Plot from './Plot';
 import { MultiSettingValues, ProtocolV2Values } from '../types';
 import { useTheme } from '../context/ThemeContext';
 
