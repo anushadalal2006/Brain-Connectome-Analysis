@@ -501,3 +501,10 @@ img { max-width: 100%; height: auto; }
 .diagram .dg-math { font-size: 14px; fill: var(--text-primary); font-style: italic; font-family: 'Times New Roman', serif; }
 .methods-bf-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 1.5rem; align-items: center; }
 @media (max-width: 900px) { .methods-bf-grid { grid-template-columns: 1fr; } }
+
+/* Small multiples */
+.mini-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.75rem; }
+.mini-panel { border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 0.6rem 0.5rem 0.2rem; background: var(--bg-primary); min-width: 0; }
+.mini-panel-head { display: flex; flex-direction: column; gap: 0.3rem; padding: 0 0.3rem; }
+.mini-panel-title { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); }
+.mini-panel .badge { font-size: 0.68rem; align-self: flex-start; }

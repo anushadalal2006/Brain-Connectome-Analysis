@@ -202,7 +202,7 @@ export const SingleNetworksPage: React.FC = () => {
           Interactive Network Topology (Subject {activeSubject} at d = 0.15)
         </h2>
         <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-          Nodes sized by degree, colored by component status. Red lines denote positive edges; blue lines denote negative edges. Isolated nodes are grouped in a dedicated row beneath the connected components. Hover on any node to view degree, signed strength, and clustering.
+          Nodes sized by degree (connected nodes grey, isolated nodes pale; node colour carries no sign). Red lines denote positive edges; blue lines denote negative edges. Isolated nodes are grouped in a dedicated row beneath the connected components. Hover on any node to view degree, signed strength, and clustering.
         </p>
 
         {loading ? (

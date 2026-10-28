@@ -88,9 +88,9 @@ export const CytoscapeNetwork: React.FC<CytoscapeNetworkProps> = ({
 
     // Dark/light styling parameters
     const isDark = theme === 'dark';
-    const nodeBg = isDark ? '#38bdf8' : '#0284c7';
-    const nodeBorder = isDark ? '#0284c7' : '#0369a1';
-    const isolatedNodeBg = isDark ? '#475569' : '#94a3b8';
+    const nodeBg = isDark ? '#64748b' : '#94a3b8'; // neutral: blue is reserved for negative edges
+    const nodeBorder = isDark ? '#cbd5e1' : '#334155';
+    const isolatedNodeBg = isDark ? '#1e293b' : '#e2e8f0';
     const textCol = isDark ? '#f1f5f9' : '#0f172a';
 
     const cy = cytoscape({

@@ -100,7 +100,8 @@ export const PlotlyTrajectoryChart: React.FC<PlotlyTrajectoryChartProps> = ({
             zerolinecolor: isDark ? '#374151' : '#cbd5e1',
           },
           yaxis: {
-            title: { text: `Metric Value: ${selectedMetric}` },
+            title: { text: `${selectedMetric} value` },
+            automargin: true,
             gridcolor: isDark ? '#1f2937' : '#e2e8f0',
             zerolinecolor: isDark ? '#374151' : '#cbd5e1',
           },

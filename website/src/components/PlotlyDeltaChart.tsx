@@ -111,7 +111,7 @@ export const PlotlyDeltaChart: React.FC<PlotlyDeltaChartProps> = ({
       y: upperBand,
       type: 'scatter',
       mode: 'lines',
-      line: { color: 'rgba(234, 179, 8, 0.2)', width: 0 },
+      line: { color: 'rgba(100, 116, 139, 0.2)', width: 0 },
       hoverinfo: 'none',
       showlegend: false,
     });
@@ -122,9 +122,9 @@ export const PlotlyDeltaChart: React.FC<PlotlyDeltaChartProps> = ({
       type: 'scatter',
       mode: 'lines',
       fill: 'tonexty',
-      fillcolor: isDark ? 'rgba(234, 179, 8, 0.15)' : 'rgba(234, 179, 8, 0.2)',
-      line: { color: 'rgba(234, 179, 8, 0.2)', width: 0 },
-      name: '±1% Rel. Tolerance Band',
+      fillcolor: isDark ? 'rgba(148, 163, 184, 0.18)' : 'rgba(100, 116, 139, 0.15)',
+      line: { color: 'rgba(100, 116, 139, 0.2)', width: 0 },
+      name: '1% minimum gap (negligible zone)',
       hoverinfo: 'y',
     });
   }
@@ -137,12 +137,12 @@ export const PlotlyDeltaChart: React.FC<PlotlyDeltaChartProps> = ({
     mode: 'lines+markers',
     name: 'ΔM(d) = A − B',
     line: {
-      color: isDark ? '#38bdf8' : '#0284c7',
+      color: isDark ? '#f9fafb' : '#0f172a',
       width: 2.5,
     },
     marker: {
       size: 8,
-      color: isDark ? '#38bdf8' : '#0284c7',
+      color: isDark ? '#f9fafb' : '#0f172a',
     },
   });
 
@@ -206,14 +206,15 @@ export const PlotlyDeltaChart: React.FC<PlotlyDeltaChartProps> = ({
               color: isDark ? '#f9fafb' : '#0f172a',
             },
             xaxis: {
-              title: { text: 'Proportional Density (d)' },
+              title: { text: 'Proportional density d' },
               tickvals: densities,
               tickformat: '.2f',
               gridcolor: isDark ? '#1f2937' : '#e2e8f0',
               zerolinecolor: isDark ? '#374151' : '#cbd5e1',
             },
             yaxis: {
-              title: { text: `Difference Δ ${selectedMetric} (A − B)` },
+              title: { text: `Δ ${selectedMetric} (A − B)` },
+              automargin: true,
               gridcolor: isDark ? '#1f2937' : '#e2e8f0',
               zerolinecolor: isDark ? '#374151' : '#cbd5e1',
             },
