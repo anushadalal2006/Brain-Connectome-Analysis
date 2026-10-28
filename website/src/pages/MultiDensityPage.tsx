@@ -437,13 +437,28 @@ export const MultiDensityPage: React.FC = () => {
           <div className="figure-wrapper">
             <img src={`${import.meta.env.BASE_URL}figures/AB_node_degree_heatmap.png`} alt="Node Degree Heatmap" />
             <div className="figure-caption">
-              <strong>Figure AB5:</strong> Node degree evolution across the 6 density levels for all 100 ICA components.
+              <strong>Figure AB5:</strong> Node degree change A − B for all 100 ICA components across the 6 densities (notebook colour scale: red = A higher, blue = B higher; not edge sign).
             </div>
           </div>
           <div className="figure-wrapper">
             <img src={`${import.meta.env.BASE_URL}figures/AB_node_strength_heatmap.png`} alt="Node Strength Heatmap" />
             <div className="figure-caption">
-              <strong>Figure AB6:</strong> Normalized node strength evolution across the 6 density levels.
+              <strong>Figure AB6:</strong> Normalised node strength change A − B across the 6 densities (notebook colour scale: red = A higher, blue = B higher; not edge sign).
+            </div>
+          </div>
+        </div>
+
+        <div className="grid-2" style={{ marginBottom: '1.5rem' }}>
+          <div className="figure-wrapper">
+            <img src={`${import.meta.env.BASE_URL}figures/AB_delta_profiles.png`} alt="Notebook figure: A − B for each metric across the six densities" loading="lazy" />
+            <div className="figure-caption">
+              <strong>Figure AB9:</strong> Notebook figure of ΔM(d) = A − B for each of the 11 metrics across the six densities. Panel titles use the <strong>frozen v1</strong> labels (raw values, no 1% gap); see the v1 vs v2 table above for the protocol v2 labels. In this figure only, red/blue dots mark the direction of ΔM (A &gt; B / A &lt; B), not edge sign.
+            </div>
+          </div>
+          <div className="figure-wrapper">
+            <img src={`${import.meta.env.BASE_URL}figures/AB_values_vs_density.png`} alt="Notebook figure: metric values of A and B across the six densities" loading="lazy" />
+            <div className="figure-caption">
+              <strong>Figure AB10:</strong> Notebook figure of the raw metric values of A (solid) and B (dashed) across the six densities. Strength and weight panels show raw (frozen v1) values, before the per-subject scale normalisation used in protocol v2.
             </div>
           </div>
         </div>
