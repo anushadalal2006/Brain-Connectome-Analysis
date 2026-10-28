@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ShieldCheck, Database, GitBranch, ExternalLink } from 'lucide-react';
+import { ShieldCheck, Database, GitBranch, ExternalLink, BookOpen, BookA, HelpCircle } from 'lucide-react';
 import { VerificationTest, EnvironmentData, ConfigData } from '../types';
 import { useJSON, PENDING } from '../data';
 import { NOTEBOOK_GITHUB_URL } from '../config';
@@ -51,6 +51,21 @@ export const Footer: React.FC = () => {
               <li>
                 <Link to="/verification" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                   <GitBranch size={14} /> Verification Suite ({testCount} Tests)
+                </Link>
+              </li>
+              <li>
+                <Link to="/notebook" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <BookOpen size={14} /> Notebook Walkthrough
+                </Link>
+              </li>
+              <li>
+                <Link to="/glossary" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <BookA size={14} /> Glossary
+                </Link>
+              </li>
+              <li>
+                <Link to="/faq" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <HelpCircle size={14} /> FAQ
                 </Link>
               </li>
               <li>

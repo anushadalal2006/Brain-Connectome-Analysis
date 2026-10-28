@@ -13,6 +13,9 @@ const ComparisonPage = lazy(() => import('./pages/ComparisonPage').then((m) => (
 const MultiDensityPage = lazy(() => import('./pages/MultiDensityPage').then((m) => ({ default: m.MultiDensityPage })));
 const ReplicationPage = lazy(() => import('./pages/ReplicationPage').then((m) => ({ default: m.ReplicationPage })));
 const VerificationPage = lazy(() => import('./pages/VerificationPage').then((m) => ({ default: m.VerificationPage })));
+const NotebookPage = lazy(() => import('./pages/NotebookPage').then((m) => ({ default: m.NotebookPage })));
+const GlossaryPage = lazy(() => import('./pages/GlossaryPage').then((m) => ({ default: m.GlossaryPage })));
+const FaqPage = lazy(() => import('./pages/FaqPage').then((m) => ({ default: m.FaqPage })));
 const LimitationsPage = lazy(() => import('./pages/LimitationsPage').then((m) => ({ default: m.LimitationsPage })));
 
 const PageLoading: React.FC = () => (
@@ -37,6 +40,9 @@ export const App: React.FC = () => {
               <Route path="/replication" element={<ReplicationPage />} />
               <Route path="/verification" element={<VerificationPage />} />
               <Route path="/limitations" element={<LimitationsPage />} />
+              <Route path="/notebook" element={<NotebookPage />} />
+              <Route path="/glossary" element={<GlossaryPage />} />
+              <Route path="/faq" element={<FaqPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
             </Suspense>
