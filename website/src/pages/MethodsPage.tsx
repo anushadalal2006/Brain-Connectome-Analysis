@@ -158,8 +158,8 @@ export const MethodsPage: React.FC = () => {
       </section>
 
       {/* Bellman-Ford Negative Cycle Mechanics */}
-      <section className="card" style={{ marginBottom: '2.5rem', borderLeft: '4px solid var(--accent-red)' }}>
-        <h2 className="card-title" style={{ color: 'var(--accent-red)' }}>
+      <section className="card" style={{ marginBottom: '2.5rem', borderLeft: '4px solid var(--badge-partial-border)' }}>
+        <h2 className="card-title" style={{ color: 'var(--badge-partial-text)' }}>
           <AlertTriangle size={20} />
           Why Shortest Paths are Undefined (Reachable Negative Cycles)
         </h2>

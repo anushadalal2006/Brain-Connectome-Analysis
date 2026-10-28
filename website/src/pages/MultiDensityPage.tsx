@@ -14,6 +14,7 @@ import {
   RetentionEdge,
 } from '../types';
 import { Layers, Sliders, Activity, Scale } from 'lucide-react';
+import { signed } from '../utils/format';
 
 export const MultiDensityPage: React.FC = () => {
   const [v1Values, setV1Values] = useState<MultiSettingValues[]>([]);
@@ -156,8 +157,8 @@ export const MultiDensityPage: React.FC = () => {
       header: 'Mean Difference (A − B)',
       align: 'right',
       render: (r) => (
-        <span className="mono" style={{ fontWeight: 600, color: r.mean_delta > 0 ? '#059669' : '#dc2626' }}>
-          {r.mean_delta > 0 ? `+${r.mean_delta.toFixed(2)}` : r.mean_delta.toFixed(2)}
+        <span className="mono" style={{ fontWeight: 600 }}>
+          {signed(r.mean_delta, 2)} <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>({r.mean_delta > 0 ? 'A higher' : r.mean_delta < 0 ? 'B higher' : 'equal'})</span>
         </span>
       ),
     },
@@ -185,8 +186,8 @@ export const MultiDensityPage: React.FC = () => {
       header: 'ΔP(e) = P_A − P_B',
       align: 'right',
       render: (r) => (
-        <span className="mono" style={{ fontWeight: 700, color: r.dP > 0 ? '#059669' : r.dP < 0 ? '#dc2626' : 'inherit' }}>
-          {r.dP > 0 ? `+${r.dP.toFixed(2)}` : r.dP.toFixed(2)}
+        <span className="mono" style={{ fontWeight: 700 }}>
+          {signed(r.dP, 2)}
         </span>
       ),
     },
@@ -333,8 +334,8 @@ export const MultiDensityPage: React.FC = () => {
                     <td><span className="badge badge-consistent">{r.raw_label}</span></td>
                     <td className="mono">{r.raw_direction}</td>
                     <td><span className="badge badge-consistent">{r.normalised_label}</span></td>
-                    <td className="mono" style={r.metric === 'mean_abs_weight' ? { color: 'var(--accent-red)', fontWeight: 700 } : {}}>
-                      {r.normalised_direction} {r.metric === 'mean_abs_weight' && '⚠️ REVERSED'}
+                    <td className="mono" style={r.metric === 'mean_abs_weight' ? { color: 'var(--badge-partial-text)', fontWeight: 700 } : {}}>
+                      {r.normalised_direction} {r.raw_direction !== r.normalised_direction && '(reversed)'}
                     </td>
                     <td className="mono">{r.n_pos} pos / {r.n_neg} neg</td>
                   </tr>

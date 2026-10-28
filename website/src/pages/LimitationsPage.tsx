@@ -120,8 +120,8 @@ export const LimitationsPage: React.FC = () => {
       <CaveatBanner settingsId={configHash} />
 
       {/* Strict Terminology Guidance */}
-      <section className="card" style={{ marginBottom: '2.5rem', borderLeft: '4px solid var(--accent-red)' }}>
-        <h2 className="card-title" style={{ color: 'var(--accent-red)' }}>
+      <section className="card" style={{ marginBottom: '2.5rem', borderLeft: '4px solid var(--badge-partial-border)' }}>
+        <h2 className="card-title" style={{ color: 'var(--badge-partial-text)' }}>
           <AlertTriangle size={20} />
           Strict Terminology & Scientific Language Standards
         </h2>
@@ -131,7 +131,7 @@ export const LimitationsPage: React.FC = () => {
           </p>
           <div className="grid-2" style={{ marginTop: '0.5rem' }}>
             <div style={{ padding: '1rem', background: 'var(--bg-tertiary)', borderRadius: '0.5rem' }}>
-              <div style={{ fontWeight: 700, color: '#dc2626', marginBottom: '0.4rem' }}>
+              <div style={{ fontWeight: 700, color: 'var(--badge-partial-text)', marginBottom: '0.4rem' }}>
                 ❌ Strictly Prohibited Language
               </div>
               <ul style={{ paddingLeft: '1.25rem', fontSize: '0.825rem', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>

@@ -120,7 +120,7 @@ export const SingleNetworksPage: React.FC = () => {
       key: 'undefined',
       header: 'Undefined Distance (Cost → −∞)',
       align: 'right',
-      render: (r) => <span className="mono" style={{ color: 'var(--accent-red)', fontWeight: 600 }}>{r.undefined} nodes</span>,
+      render: (r) => <span className="mono" style={{ color: 'var(--badge-partial-text)', fontWeight: 600 }}>{r.undefined} nodes</span>,
     },
     {
       key: 'unreachable',
@@ -240,7 +240,7 @@ export const SingleNetworksPage: React.FC = () => {
 
         <div className="card">
           <h2 className="card-title">
-            <AlertTriangle size={20} style={{ color: 'var(--accent-red)' }} />
+            <AlertTriangle size={20} style={{ color: 'var(--badge-partial-text)' }} />
             Bellman–Ford Shortest-Path Outcomes
           </h2>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>

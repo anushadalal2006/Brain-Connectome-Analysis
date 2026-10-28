@@ -4,6 +4,7 @@ import { CytoscapeOverlapNetwork } from '../components/CytoscapeOverlapNetwork';
 import { DataTable, Column } from '../components/DataTable';
 import { ComparisonGlobal, ComparisonNode, ComparisonEdge, GlobalStatistic } from '../types';
 import { Share2, GitCompare, Activity } from 'lucide-react';
+import { signedNum, signed } from '../utils/format';
 
 export const ComparisonPage: React.FC = () => {
   const [globalDiffs, setGlobalDiffs] = useState<ComparisonGlobal[]>([]);
@@ -84,10 +85,9 @@ export const ComparisonPage: React.FC = () => {
       align: 'right',
       render: (r) => {
         const val = r.A_minus_B;
-        const color = val > 0 ? '#059669' : val < 0 ? '#dc2626' : 'var(--text-secondary)';
         return (
-          <span className="mono" style={{ fontWeight: 700, color }}>
-            {val > 0 ? `+${typeof val === 'number' ? (Number.isInteger(val) ? val : val.toFixed(4)) : val}` : (typeof val === 'number' ? (Number.isInteger(val) ? val : val.toFixed(4)) : val)}
+          <span className="mono" style={{ fontWeight: 700 }}>
+            {signedNum(val)}
           </span>
         );
       },
@@ -128,8 +128,8 @@ export const ComparisonPage: React.FC = () => {
       header: 'Δ Degree',
       align: 'right',
       render: (r) => (
-        <span className="mono" style={{ fontWeight: 600, color: r.d_degree > 0 ? '#059669' : r.d_degree < 0 ? '#dc2626' : 'inherit' }}>
-          {r.d_degree > 0 ? `+${r.d_degree}` : r.d_degree}
+        <span className="mono" style={{ fontWeight: 600 }}>
+          {signedNum(r.d_degree)}
         </span>
       ),
     },
@@ -150,8 +150,8 @@ export const ComparisonPage: React.FC = () => {
       header: 'Δ Norm Str',
       align: 'right',
       render: (r) => (
-        <span className="mono" style={{ fontWeight: 600, color: r.d_strength_norm > 0 ? '#059669' : r.d_strength_norm < 0 ? '#dc2626' : 'inherit' }}>
-          {r.d_strength_norm > 0 ? `+${r.d_strength_norm.toFixed(2)}` : r.d_strength_norm.toFixed(2)}
+        <span className="mono" style={{ fontWeight: 600 }}>
+          {signed(r.d_strength_norm, 2)}
         </span>
       ),
     },
@@ -161,7 +161,7 @@ export const ComparisonPage: React.FC = () => {
       align: 'right',
       render: (r) => (
         <span className="mono">
-          {r.d_clustering > 0 ? `+${r.d_clustering.toFixed(4)}` : r.d_clustering.toFixed(4)}
+          {signed(r.d_clustering, 4)}
         </span>
       ),
     },
