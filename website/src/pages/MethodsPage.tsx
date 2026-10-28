@@ -132,7 +132,7 @@ export const MethodsPage: React.FC = () => {
         <div className="card">
           <h2 className="card-title">
             <Code2 size={20} style={{ color: 'var(--accent-blue)' }} />
-            Density Settings & Edge Counts (<KaTeX math="K = 6" />)
+            Density Settings & Edge Counts (K = 6)
           </h2>
           <div className="table-container" style={{ marginTop: '0.5rem' }}>
             <table>

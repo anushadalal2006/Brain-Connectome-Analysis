@@ -1,5 +1,6 @@
 import React from 'react';
 import katex from 'katex';
+import 'katex/dist/katex.min.css';
 
 interface KaTeXProps {
   math: string;
@@ -22,7 +23,7 @@ export const KaTeX: React.FC<KaTeXProps> = ({ math, block = false, className = '
   if (block) {
     return (
       <div
-        className={`my-3 overflow-x-auto text-center py-2 ${className}`}
+        className={`katex-display-wrap ${className}`}
         dangerouslySetInnerHTML={{ __html: html }}
       />
     );
@@ -30,7 +31,7 @@ export const KaTeX: React.FC<KaTeXProps> = ({ math, block = false, className = '
 
   return (
     <span
-      className={`inline-block ${className}`}
+      className={className}
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );
