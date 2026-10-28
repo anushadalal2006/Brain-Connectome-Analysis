@@ -1,36 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { ShieldCheck, Database, GitBranch, ExternalLink } from 'lucide-react';
-import { VerificationTest, EnvironmentData } from '../types';
+import { VerificationTest, EnvironmentData, ConfigData } from '../types';
+import { useJSON, PENDING } from '../data';
+import { NOTEBOOK_GITHUB_URL } from '../config';
 
 export const Footer: React.FC = () => {
-  const [configHash, setConfigHash] = useState('f1ebb3fdc3');
-  const [testCount, setTestCount] = useState(181);
-  const [generatedAt, setGeneratedAt] = useState('2026-10-21T17:13:03Z');
-
-  useEffect(() => {
-    fetch(`${import.meta.env.BASE_URL}data/config.json`)
-      .then((r) => r.json())
-      .then((cfg) => {
-        if (cfg.config?.hash) setConfigHash(cfg.config.hash);
-      })
-      .catch(() => {});
-
-    fetch(`${import.meta.env.BASE_URL}data/verification_tests.json`)
-      .then((r) => r.json())
-      .then((tests: VerificationTest[]) => {
-        const total = tests.reduce((acc, t) => acc + t.total, 0);
-        if (total > 0) setTestCount(total);
-      })
-      .catch(() => {});
-
-    fetch(`${import.meta.env.BASE_URL}data/environment.json`)
-      .then((r) => r.json())
-      .then((env: EnvironmentData) => {
-        if (env.created_at) setGeneratedAt(env.created_at);
-      })
-      .catch(() => {});
-  }, []);
+  const cfg = useJSON<ConfigData>('config.json');
+  const tests = useJSON<VerificationTest[]>('verification_tests.json');
+  const env = useJSON<EnvironmentData>('environment.json');
+  const configHash = cfg?.config.hash ?? PENDING;
+  const testCount = tests ? tests.reduce((acc, t) => acc + t.total, 0) : PENDING;
+  const generatedAt = env?.created_at ?? PENDING;
 
   return (
     <footer className="footer">
@@ -79,7 +60,7 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <a
-                  href="https://github.com/anushadalal/Brain-Connectome-Analysis/blob/main/Brain_Connectome_Analysis.ipynb"
+                  href={NOTEBOOK_GITHUB_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
@@ -108,7 +89,7 @@ export const Footer: React.FC = () => {
             Descriptive Analysis • College Mini Project Presentation • GitHub Pages Static Build
           </div>
           <div className="mono">
-            Generated: {generatedAt} UTC
+            Generated: {generatedAt}
           </div>
         </div>
       </div>

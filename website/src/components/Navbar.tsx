@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { Sun, Moon, Github, ExternalLink, Menu, X, Activity } from 'lucide-react';
+import { NOTEBOOK_GITHUB_URL, NOTEBOOK_COLAB_URL } from '../config';
 
 export const Navbar: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
@@ -50,7 +51,7 @@ export const Navbar: React.FC = () => {
         {/* Actions */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
           <a
-            href="https://github.com/anushadalal/Brain-Connectome-Analysis/blob/main/Brain_Connectome_Analysis.ipynb"
+            href={NOTEBOOK_GITHUB_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="btn"
@@ -62,7 +63,7 @@ export const Navbar: React.FC = () => {
           </a>
 
           <a
-            href="https://colab.research.google.com/github/anushadalal/Brain-Connectome-Analysis/blob/main/Brain_Connectome_Analysis.ipynb"
+            href={NOTEBOOK_COLAB_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="btn"

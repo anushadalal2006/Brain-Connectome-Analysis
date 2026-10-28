@@ -23,6 +23,7 @@ import {
   ReplicationSummary,
   ComparisonEdge
 } from '../types';
+import { NOTEBOOK_GITHUB_URL, NOTEBOOK_COLAB_URL } from '../config';
 
 export const Home: React.FC = () => {
   const [configHash, setConfigHash] = useState('f1ebb3fdc3');
@@ -155,7 +156,7 @@ export const Home: React.FC = () => {
             View Multi-Density Findings
           </Link>
           <a
-            href="https://github.com/anushadalal/Brain-Connectome-Analysis/blob/main/Brain_Connectome_Analysis.ipynb"
+            href={NOTEBOOK_GITHUB_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="btn"
@@ -163,7 +164,7 @@ export const Home: React.FC = () => {
             <Github size={16} /> View Notebook on GitHub
           </a>
           <a
-            href="https://colab.research.google.com/github/anushadalal/Brain-Connectome-Analysis/blob/main/Brain_Connectome_Analysis.ipynb"
+            href={NOTEBOOK_COLAB_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="btn"
