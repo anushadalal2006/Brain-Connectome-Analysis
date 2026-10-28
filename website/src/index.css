@@ -515,3 +515,9 @@ img { max-width: 100%; height: auto; }
 .chips { display: flex; flex-wrap: wrap; gap: 0.35rem; }
 .chip { font-family: var(--font-mono); font-size: 0.75rem; padding: 0.15rem 0.5rem; border-radius: 9999px; background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border-color); }
 .chip-both { border: 2px solid var(--text-primary); color: var(--text-primary); font-weight: 700; }
+:root { --overlap-flip: #ca8a04; }
+[data-theme='dark'] { --overlap-flip: #facc15; }
+.iso-a { background: transparent; color: var(--overlap-A); border-color: var(--overlap-A); }
+.iso-b { background: transparent; color: var(--overlap-B); border-color: var(--overlap-B); }
+.flip-list { list-style: none; padding: 0; margin: 0.35rem 0 0; display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.8rem; color: var(--text-secondary); }
+.flip-list li { border-left: 3px solid var(--overlap-flip); padding-left: 0.5rem; }

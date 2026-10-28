@@ -1,57 +1,49 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { CaveatBanner } from '../components/CaveatBanner';
 import { CytoscapeOverlapNetwork } from '../components/CytoscapeOverlapNetwork';
 import { DataTable, Column } from '../components/DataTable';
-import { ComparisonGlobal, ComparisonNode, ComparisonEdge, GlobalStatistic } from '../types';
+import { ComparisonGlobal, ComparisonNode, ComparisonEdge, GlobalStatistic, ConfigData } from '../types';
+import { useJSON, PENDING } from '../data';
+import { ChartCard } from '../components/ChartCard';
+import { GlobalDumbbell, DegreeScatter, DegreeDiffBars, IsolationBars, OverlapBar, ISOLATION_TEXT } from '../components/ComparisonCharts';
 import { Share2, GitCompare, Activity } from 'lucide-react';
 import { signedNum, signed } from '../utils/format';
 
 export const ComparisonPage: React.FC = () => {
-  const [globalDiffs, setGlobalDiffs] = useState<ComparisonGlobal[]>([]);
-  const [nodeDiffs, setNodeDiffs] = useState<ComparisonNode[]>([]);
-  const [edges, setEdges] = useState<ComparisonEdge[]>([]);
-  const [stats, setStats] = useState<GlobalStatistic[]>([]);
-  const [subA, setSubA] = useState('100206');
-  const [subB, setSubB] = useState('100307');
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    Promise.all([
-      fetch(`${import.meta.env.BASE_URL}data/comparison_global_d015.json`).then((r) => r.json()),
-      fetch(`${import.meta.env.BASE_URL}data/comparison_nodes_d015.json`).then((r) => r.json()),
-      fetch(`${import.meta.env.BASE_URL}data/comparison_edges_d015.json`).then((r) => r.json()),
-      fetch(`${import.meta.env.BASE_URL}data/statistics_global.json`).then((r) => r.json()),
-      fetch(`${import.meta.env.BASE_URL}data/config.json`).then((r) => r.json()),
-    ])
-      .then(([globData, nodeData, edgeData, statsData, configData]) => {
-        setGlobalDiffs(globData);
-        setNodeDiffs(nodeData);
-        setEdges(edgeData);
-        setStats(statsData);
-        if (configData.subjects?.A) setSubA(configData.subjects.A);
-        if (configData.subjects?.B) setSubB(configData.subjects.B);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error fetching comparison data:', err);
-        setLoading(false);
-      });
-  }, []);
+  const globalData = useJSON<ComparisonGlobal[]>('comparison_global_d015.json');
+  const nodeData = useJSON<ComparisonNode[]>('comparison_nodes_d015.json');
+  const edgeData = useJSON<ComparisonEdge[]>('comparison_edges_d015.json');
+  const statsData = useJSON<GlobalStatistic[]>('statistics_global.json');
+  const cfg = useJSON<ConfigData>('config.json');
+  const globalDiffs = globalData ?? [];
+  const nodeDiffs = nodeData ?? [];
+  const edges = edgeData ?? [];
+  const stats = statsData ?? [];
+  const loading = !edgeData || !nodeData;
+  const subA = cfg?.subjects.A ?? PENDING;
+  const subB = cfg?.subjects.B ?? PENDING;
+  const density = cfg ? cfg.config.density.toFixed(2) : PENDING;
 
   const sharedCount = edges.filter((e) => e.status === 'both').length;
   const onlyACount = edges.filter((e) => e.status === 'A_only').length;
   const onlyBCount = edges.filter((e) => e.status === 'B_only').length;
-  const signFlipCount = edges.filter((e) => e.sign_flip).length;
-  const mCount = sharedCount + onlyACount > 0 ? sharedCount + onlyACount : 743;
+  const signFlipEdges = edges.filter((e) => e.sign_flip);
+  const signFlipCount = signFlipEdges.length;
+  const m = sharedCount + onlyACount;
+  const mCount = edgeData ? m : PENDING;
   const totalUnion = sharedCount + onlyACount + onlyBCount;
-  const sharedPct = mCount > 0 ? ((sharedCount / mCount) * 100).toFixed(1) : '47.8';
-  const onlyAPct = mCount > 0 ? ((onlyACount / mCount) * 100).toFixed(1) : '52.2';
-  const onlyBPct = mCount > 0 ? ((onlyBCount / mCount) * 100).toFixed(1) : '52.2';
-  const jaccard = totalUnion > 0 ? (sharedCount / totalUnion).toFixed(3) : '0.314';
+  const pct = (x: number) => (edgeData && m > 0 ? ((x / m) * 100).toFixed(1) : PENDING);
+  const sharedPct = pct(sharedCount);
+  const onlyAPct = pct(onlyACount);
+  const onlyBPct = pct(onlyBCount);
+  const jaccard = edgeData && totalUnion > 0 ? (sharedCount / totalUnion).toFixed(3) : PENDING;
 
   const meanAbsRow = stats.find((s) => s.statistic === 'mean_abs');
-  const meanAbsA = typeof meanAbsRow?.A === 'number' ? meanAbsRow.A.toFixed(4) : '6.3631';
-  const meanAbsB = typeof meanAbsRow?.B === 'number' ? meanAbsRow.B.toFixed(4) : '5.2530';
+  const meanAbsA = meanAbsRow ? meanAbsRow.A.toFixed(3) : PENDING;
+  const meanAbsB = meanAbsRow ? meanAbsRow.B.toFixed(3) : PENDING;
+  const higherScale = meanAbsRow ? (meanAbsRow.A > meanAbsRow.B ? 'A' : 'B') : PENDING;
+  const isoCount = (k: string) => nodeDiffs.filter((n) => n.isolation_change === k).length;
+  const maxAbsDeg = nodeDiffs.length ? Math.max(...nodeDiffs.map((n) => Math.abs(n.d_degree))) : PENDING;
 
   const globalColumns: Column<ComparisonGlobal>[] = [
     {
@@ -170,10 +162,9 @@ export const ComparisonPage: React.FC = () => {
       header: 'Isolation Switch',
       align: 'center',
       render: (r) => {
-        if (r.isolation_change === 'connected_in_both') return <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Connected</span>;
-        if (r.isolation_change === 'isolated_in_both') return <span className="badge badge-neutral" style={{ fontSize: '0.7rem' }}>Isolated Both</span>;
-        if (r.isolation_change === 'isolated_in_A') return <span className="badge badge-partial" style={{ fontSize: '0.7rem' }}>Isolated in A</span>;
-        return <span className="badge badge-sensitive" style={{ fontSize: '0.7rem' }}>Isolated in B</span>;
+        const cls = r.isolation_change === 'neither' ? '' : r.isolation_change === 'both' ? 'badge badge-neutral' : r.isolation_change === 'A_only' ? 'badge iso-a' : 'badge iso-b';
+        const text = ISOLATION_TEXT[r.isolation_change] ?? r.isolation_change;
+        return cls ? <span className={cls} style={{ fontSize: '0.7rem', textTransform: 'none', letterSpacing: 0 }}>{text}</span> : <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{text}</span>;
       },
     },
   ];
@@ -183,11 +174,11 @@ export const ComparisonPage: React.FC = () => {
       <div className="page-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
           <span className="badge badge-neutral">Pairwise Analysis</span>
-          <span className="badge badge-blue mono">d = 0.15 ({mCount} edges)</span>
+          <span className="badge badge-neutral mono">d = {density} ({mCount} edges)</span>
         </div>
-        <h1 className="page-title">Pairwise Network Comparison (d = 0.15)</h1>
+        <h1 className="page-title">Pairwise Network Comparison (d = {density})</h1>
         <p className="page-subtitle">
-          Direct comparison of Subject A ({subA}) and Subject B ({subB}) at primary density d = 0.15: global differences, topological edge overlap, and node-level variation.
+          Direct comparison of Subject A ({subA}) and Subject B ({subB}) at the primary density d = {density}: global differences, edge overlap, and node-level differences.
         </p>
       </div>
 
@@ -205,19 +196,19 @@ export const ComparisonPage: React.FC = () => {
             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>{sharedPct}% of each network</div>
           </div>
 
-          <div className="card" style={{ borderLeft: '4px solid #ea580c' }}>
+          <div className="card" style={{ borderLeft: '4px solid var(--overlap-A)' }}>
             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Only in Subject A</div>
-            <div style={{ fontSize: '1.85rem', fontWeight: 700, color: '#ea580c' }}>{onlyACount} edges</div>
+            <div style={{ fontSize: '1.85rem', fontWeight: 700, color: 'var(--overlap-A)' }}>{onlyACount} edges</div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>{onlyAPct}% unique to A</div>
           </div>
 
-          <div className="card" style={{ borderLeft: '4px solid #7c3aed' }}>
+          <div className="card" style={{ borderLeft: '4px solid var(--overlap-B)' }}>
             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Only in Subject B</div>
-            <div style={{ fontSize: '1.85rem', fontWeight: 700, color: '#7c3aed' }}>{onlyBCount} edges</div>
+            <div style={{ fontSize: '1.85rem', fontWeight: 700, color: 'var(--overlap-B)' }}>{onlyBCount} edges</div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>{onlyBPct}% unique to B</div>
           </div>
 
-          <div className="card" style={{ borderLeft: '4px solid #eab308' }}>
+          <div className="card" style={{ borderLeft: '4px solid var(--overlap-flip)' }}>
             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Jaccard Similarity</div>
             <div style={{ fontSize: '1.85rem', fontWeight: 700, color: 'var(--text-primary)' }}>{jaccard}</div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>{signFlipCount} sign flips observed</div>
@@ -232,7 +223,7 @@ export const ComparisonPage: React.FC = () => {
           Interactive Edge Overlap Network
         </h2>
         <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-          Color coding strictly matches the publication figure: <strong>Grey</strong> = in both networks ({sharedCount} edges), <strong>Orange</strong> = only in Subject A ({onlyACount} edges), <strong>Purple</strong> = only in Subject B ({onlyBCount} edges). Line style denotes edge sign: <strong>Solid</strong> = positive correlation, <strong>Dashed</strong> = negative correlation. The <strong>{signFlipCount} sign flips</strong> are highlighted with a thick gold stroke.
+          Colours match the notebook figure: <strong>Grey</strong> = in both networks ({sharedCount} edges), <strong>Orange</strong> = only in Subject A ({onlyACount} edges), <strong>Purple</strong> = only in Subject B ({onlyBCount} edges). Line style denotes edge sign: <strong>Solid</strong> = positive correlation, <strong>Dashed</strong> = negative correlation. The <strong>{signFlipCount} sign flips</strong> are highlighted with a thick gold stroke.
         </p>
 
         {loading ? (
@@ -246,12 +237,69 @@ export const ComparisonPage: React.FC = () => {
       <section style={{ marginBottom: '2.5rem' }}>
         <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.75rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <Activity size={20} style={{ color: 'var(--accent-blue)' }} />
-          Global Differences at Primary Setting (d = 0.15)
+          Global Differences at d = {density}
         </h2>
         <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-          Global metrics evaluated at d = 0.15. Scale-dependent metrics (such as mean strength and mean |w|) are heavily influenced by Subject A's higher whole-matrix scale ({meanAbsA} vs {meanAbsB}).
+          Global metrics at d = {density}. Scale-dependent metrics (mean strength and mean |w|) also reflect the difference in whole-matrix scale: mean |w| is {meanAbsA} in A and {meanAbsB} in B, higher in {higherScale}.
         </p>
         <DataTable data={globalDiffs} columns={globalColumns} pageSize={15} />
+      </section>
+
+      <section style={{ marginBottom: '2.5rem' }}>
+        <ChartCard
+          title="A and B side by side for every global metric: the largest gaps are in strength and fragmentation"
+          caption={<>Each metric is divided by the mean of A and B, so all metrics share one axis; 1 (dotted line) means equal. Metrics marked * are scale-dependent (raw r-to-Z units), so part of their gap is the per-subject scale difference. Hover for the actual values.</>}
+          sources={['comparison_global_d015.json']}
+          minWidth={480}
+        >
+          {globalData ? <GlobalDumbbell rows={globalDiffs} subA={String(subA)} subB={String(subB)} /> : <div style={{ height: 400 }}>Loading chart…</div>}
+        </ChartCard>
+      </section>
+
+      <section style={{ marginBottom: '2.5rem' }}>
+        <h2 className="section-title">Which nodes differ</h2>
+        <div className="grid-2">
+          <ChartCard
+            title={`Node degree in A vs B: most nodes sit off the y = x line; the largest gap is ${maxAbsDeg} edges`}
+            caption={<>Each point is one network node (ICA component). Points above the dashed line have more edges in B, below it more in A. The 10 nodes with the largest |Δ degree| are labelled.</>}
+            sources={['comparison_nodes_d015.json']}
+          >
+            {nodeData ? <DegreeScatter nodes={nodeDiffs} /> : <div style={{ height: 420 }}>Loading chart…</div>}
+          </ChartCard>
+          <ChartCard
+            title="The 20 nodes with the largest degree difference"
+            caption={<>Δ degree = degree in A − degree in B; orange where A has more edges, purple where B has more. Ties are ordered by node number.</>}
+            sources={['comparison_nodes_d015.json']}
+          >
+            {nodeData ? <DegreeDiffBars nodes={nodeDiffs} /> : <div style={{ height: 520 }}>Loading chart…</div>}
+          </ChartCard>
+        </div>
+        <div className="grid-2">
+          <ChartCard
+            title={`${isoCount('both')} nodes are isolated in both subjects; ${isoCount('B_only')} only in B and ${isoCount('A_only')} only in A`}
+            caption={<>Isolation status of each node in A and B at d = {density}. Grey = isolated in both, orange = only in A, purple = only in B (same colours as the overlap network).</>}
+            sources={['comparison_nodes_d015.json']}
+          >
+            {nodeData ? <IsolationBars nodes={nodeDiffs} /> : <div style={{ height: 300 }}>Loading chart…</div>}
+          </ChartCard>
+          <ChartCard
+            title={`Of ${totalUnion || PENDING} edges in A or B, ${sharedCount || PENDING} are shared (Jaccard ${jaccard}) and ${signFlipCount} change sign`}
+            caption={<>Each subject keeps {mCount} edges. Shared edges are split into same sign and sign flip (gold); the rest are kept by only one subject.</>}
+            sources={['comparison_edges_d015.json']}
+          >
+            {edgeData ? <OverlapBar edges={edges} /> : <div style={{ height: 140 }}>Loading chart…</div>}
+            <div style={{ marginTop: '0.75rem', fontSize: '0.85rem' }}>
+              <strong>Sign flips</strong> (edge kept by both, opposite sign):
+              <ul className="flip-list">
+                {signFlipEdges.map((e) => (
+                  <li key={`${e.i}-${e.j}`} className="mono">
+                    {e.label_i} — {e.label_j}: {e.sign_A > 0 ? '+' : '−'} in A, {e.sign_B > 0 ? '+' : '−'} in B
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </ChartCard>
+        </div>
       </section>
 
       {/* Node Differences Table */}
@@ -283,7 +331,7 @@ export const ComparisonPage: React.FC = () => {
         <div className="figure-wrapper" style={{ marginBottom: '1.5rem' }}>
           <img src={`${import.meta.env.BASE_URL}figures/AB_edge_overlap_network.png`} alt="Publication Edge Overlap Network" />
           <div className="figure-caption">
-            <strong>Figure AB2:</strong> Edge overlap network at d = 0.15 showing shared (grey), A-only (orange), and B-only (purple) connections.
+            <strong>Figure AB2:</strong> Edge overlap network at d = {density} showing shared (grey), A-only (orange), and B-only (purple) connections.
           </div>
         </div>
 
