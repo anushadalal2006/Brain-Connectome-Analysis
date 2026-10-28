@@ -58,29 +58,32 @@ These results are descriptive: five pairs, no significance testing.
 An interactive, multi-page static presentation website for this project is available in [`website/`](./website/) and is deployed to GitHub Pages at:
 **[https://anushadalal.github.io/Brain-Connectome-Analysis/](https://anushadalal.github.io/Brain-Connectome-Analysis/)**
 
+The test deployment is at [https://anushadalal2006.github.io/Brain-Connectome-Analysis/](https://anushadalal2006.github.io/Brain-Connectome-Analysis/).
+
 The site features interactive Cytoscape network views at $d = 0.15$, interactive Plotly multi-density charts with dynamic 1% tolerance bands, sortable node difference tables, replication grids across 5 pairs, and the full 181-test verification scorecard.
 
 ### HCP Open Access Compliance
-In strict compliance with the **HCP Open Access Data Use Terms**, raw connectivity values ($w_A, w_B, d_w$) are never published or committed. The data pipeline drops all raw weights before generating public JSON files; only derived graph structures, signs, and normalized statistics are retained.
+In strict compliance with the **HCP Open Access Data Use Terms**, raw connectivity values (per-edge weights of A and B, or their differences) are never published or committed. The data pipeline drops all raw weights before generating public JSON files; only derived graph structures, signs, and normalized statistics are retained.
 
 ### How to build and run the website locally
 
-On Windows (PowerShell or Git Bash):
+The site reads only the committed files in `website/public/data/*.json` and `website/public/figures/*.png`, so you can run it without the HCP data.
 
 ```bash
-# 1. Generate static JSON data files and copy figures (requires python 3 and pandas)
-python website/scripts/build_data.py
-
-# 2. Enter website directory and install dependencies
 cd website
-npm install
-
-# 3. Start local development server
-npm run dev
-
-# 4. Build for production (outputs to website/dist/)
-npm run build
-
-# 5. Preview production build locally
-npm run preview
+npm ci
+npm run dev        # development server
+npm run build      # production build into website/dist/
+npm run preview    # serve the build at http://localhost:4173/Brain-Connectome-Analysis/
 ```
+
+### How to regenerate the site data (owner only)
+
+`build_data.py` needs `site_data/` (notebook outputs: `site_data/run_*/` and `site_data/replication_*/`). That folder is HCP-derived, is git-ignored and exists only on the owner's machine. Never run the script without it, and never run it in GitHub Actions.
+
+```bash
+python website/scripts/build_data.py    # site_data/ -> website/public/data/*.json and public/figures/*.png
+python website/scripts/check_data.py    # must print ALL CHECKS PASSED before committing
+```
+
+`check_data.py` verifies every key number against the notebook results and checks that no raw weight fields are published. Run it after any change to `website/public/data/`.
