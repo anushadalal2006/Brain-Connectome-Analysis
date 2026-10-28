@@ -300,7 +300,7 @@ def main():
             "passed": 10,
             "total": 10,
             "status": "PASS",
-            "description": "run_pipeline() produces bitwise-identical results across all steps compared to cell-by-cell execution."
+            "description": "run_pipeline() reproduces the step-by-step results: every compared table and value is exactly equal to the cell-by-cell run."
         }
     ]
     with open(os.path.join(data_out_dir, "verification_tests.json"), "w", encoding="utf-8") as f:
