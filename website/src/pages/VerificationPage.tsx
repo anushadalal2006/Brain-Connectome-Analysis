@@ -202,7 +202,7 @@ export const VerificationPage: React.FC = () => {
         <section className="card">
           <h2 className="card-title">
             <HardDrive size={20} style={{ color: 'var(--accent-blue)' }} />
-            Source Data Provenance & Cryptographic Audit
+            Source Data Provenance & Checksum Record
           </h2>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
             Verification of original HCP S1200 PTN release packages retrieved from S3.

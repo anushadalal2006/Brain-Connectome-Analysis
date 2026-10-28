@@ -82,12 +82,10 @@ def main():
             "mean_abs_w_A": float(row_A["mean_abs_w"]),
             "n_pos_A": int(row_A["n_pos"]),
             "n_neg_A": int(row_A["n_neg"]),
-            "max_abs_w_A": float(row_A["max_abs_w"]),
             "mean_w_B": float(row_B["mean_w"]),
             "mean_abs_w_B": float(row_B["mean_abs_w"]),
             "n_pos_B": int(row_B["n_pos"]),
             "n_neg_B": int(row_B["n_neg"]),
-            "max_abs_w_B": float(row_B["max_abs_w"]),
         })
     with open(os.path.join(data_out_dir, "statistics_nodes.json"), "w", encoding="utf-8") as f:
         json.dump(stat_nodes, f, indent=2)

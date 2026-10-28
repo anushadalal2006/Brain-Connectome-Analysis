@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { CaveatBanner } from '../components/CaveatBanner';
 import { PlotlyDeltaChart } from '../components/PlotlyDeltaChart';
 import { PlotlyTrajectoryChart } from '../components/PlotlyTrajectoryChart';
@@ -214,7 +215,7 @@ export const MultiDensityPage: React.FC = () => {
         <p className="page-subtitle">
           Evaluation of connectome metric stability across six proportional densities (K = 6), side-by-side consistency protocols, post-hoc scale check, and Global-to-Local local change associations.
         </p>
-        <a href="/limitations" className="badge badge-muted mono" style={{ marginTop: '0.5rem' }} title="View limitations and data provenance">Settings ID: {settingsHash}</a>
+        <Link to="/limitations" className="badge badge-muted mono" style={{ marginTop: '0.5rem' }} title="View limitations and data provenance">Settings ID: {settingsHash}</Link>
       </div>
 
       <CaveatBanner />
@@ -230,6 +231,26 @@ export const MultiDensityPage: React.FC = () => {
         <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
           Compare metric difference <span className="mono">ΔM(d) = A − B</span> and individual subject trajectories across <span className="mono">d ∈ [0.05, 0.10, 0.15, 0.20, 0.25, 0.30]</span>. Under Protocol v2, a shaded ±1% relative tolerance band (<span className="mono">±0.01 × mean(|A|, |B|)</span>) is dynamically rendered at each density.
         </p>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>View:</span>
+          <button
+            type="button"
+            className={`btn ${mode === 'v2' ? 'btn-primary' : ''}`}
+            aria-pressed={mode === 'v2'}
+            onClick={() => handleModeToggle('v2')}
+          >
+            Protocol v2 (normalised, ±1% band)
+          </button>
+          <button
+            type="button"
+            className={`btn ${mode === 'v1' ? 'btn-primary' : ''}`}
+            aria-pressed={mode === 'v1'}
+            onClick={() => handleModeToggle('v1')}
+          >
+            Frozen v1 (raw values, no band)
+          </button>
+        </div>
 
         <div className="grid-2">
           <div>
@@ -400,7 +421,7 @@ export const MultiDensityPage: React.FC = () => {
               alt={`Global-to-Local panel for ${selectedG2LFig}`}
             />
             <div className="figure-caption">
-              <strong>Figure G2L:</strong> Multi-density profile and top contributing local alterations for {selectedG2LFig}. (Figure titles reflect frozen v1 labels).
+              <strong>Figure G2L:</strong> Multi-density profile and the top local changes that go together with the global difference for {selectedG2LFig}. (Figure titles reflect frozen v1 labels).
             </div>
           </div>
         </div>

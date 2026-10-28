@@ -84,12 +84,10 @@ export interface NodeStatistic {
   mean_abs_w_A: number;
   n_pos_A: number;
   n_neg_A: number;
-  max_abs_w_A: number;
   mean_w_B: number;
   mean_abs_w_B: number;
   n_pos_B: number;
   n_neg_B: number;
-  max_abs_w_B: number;
 }
 
 export interface GlobalMetric {
