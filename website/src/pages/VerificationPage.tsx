@@ -124,7 +124,7 @@ export const VerificationPage: React.FC = () => {
           <MetricCard
             title="Settings ID"
             value={settingsHash}
-            subtitle="Cryptographic configuration hash"
+            subtitle="Hash of the configuration (settings ID)"
             badge={{ text: 'Frozen', variant: 'neutral' }}
             icon={<GitCommit size={20} />}
           />
