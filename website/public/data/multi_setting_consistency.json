@@ -1,0 +1,112 @@
+[
+  {
+    "metric":"avg_clustering_all",
+    "n_pos":5,
+    "n_neg":1,
+    "n_zero":0,
+    "S_M":0.8333333333,
+    "label":"construction-sensitive",
+    "direction":"A > B",
+    "scale_dependent":false
+  },
+  {
+    "metric":"avg_clustering_lcc",
+    "n_pos":2,
+    "n_neg":4,
+    "n_zero":0,
+    "S_M":0.6666666667,
+    "label":"construction-sensitive",
+    "direction":"A < B",
+    "scale_dependent":false
+  },
+  {
+    "metric":"transitivity_all",
+    "n_pos":0,
+    "n_neg":6,
+    "n_zero":0,
+    "S_M":1.0,
+    "label":"setting-consistent",
+    "direction":"A < B",
+    "scale_dependent":false
+  },
+  {
+    "metric":"transitivity_lcc",
+    "n_pos":0,
+    "n_neg":6,
+    "n_zero":0,
+    "S_M":1.0,
+    "label":"setting-consistent",
+    "direction":"A < B",
+    "scale_dependent":false
+  },
+  {
+    "metric":"n_components",
+    "n_pos":0,
+    "n_neg":6,
+    "n_zero":0,
+    "S_M":1.0,
+    "label":"setting-consistent",
+    "direction":"A < B",
+    "scale_dependent":false
+  },
+  {
+    "metric":"largest_component_size",
+    "n_pos":6,
+    "n_neg":0,
+    "n_zero":0,
+    "S_M":1.0,
+    "label":"setting-consistent",
+    "direction":"A > B",
+    "scale_dependent":false
+  },
+  {
+    "metric":"n_isolated",
+    "n_pos":0,
+    "n_neg":6,
+    "n_zero":0,
+    "S_M":1.0,
+    "label":"setting-consistent",
+    "direction":"A < B",
+    "scale_dependent":false
+  },
+  {
+    "metric":"mean_strength",
+    "n_pos":6,
+    "n_neg":0,
+    "n_zero":0,
+    "S_M":1.0,
+    "label":"setting-consistent",
+    "direction":"A > B",
+    "scale_dependent":true
+  },
+  {
+    "metric":"mean_strength_lcc",
+    "n_pos":6,
+    "n_neg":0,
+    "n_zero":0,
+    "S_M":1.0,
+    "label":"setting-consistent",
+    "direction":"A > B",
+    "scale_dependent":true
+  },
+  {
+    "metric":"share_negative_edges",
+    "n_pos":0,
+    "n_neg":6,
+    "n_zero":0,
+    "S_M":1.0,
+    "label":"setting-consistent",
+    "direction":"A < B",
+    "scale_dependent":false
+  },
+  {
+    "metric":"mean_abs_weight",
+    "n_pos":6,
+    "n_neg":0,
+    "n_zero":0,
+    "S_M":1.0,
+    "label":"setting-consistent",
+    "direction":"A > B",
+    "scale_dependent":true
+  }
+]

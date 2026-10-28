@@ -1,0 +1,58 @@
+{
+  "pairs": [
+    [
+      "100206",
+      "100307"
+    ],
+    [
+      "100408",
+      "100610"
+    ],
+    [
+      "101006",
+      "101107"
+    ],
+    [
+      "101309",
+      "101915"
+    ],
+    [
+      "102008",
+      "102109"
+    ]
+  ],
+  "pair_rule": "next 8 subjectIDs after A and B, paired in order",
+  "config_hash": "f1ebb3fdc3",
+  "density_settings": [
+    0.05,
+    0.1,
+    0.15,
+    0.2,
+    0.25,
+    0.3
+  ],
+  "eps": 1e-09,
+  "rule_v2": "v2: a density counts as a difference only if |A - B| > max(eps, REL_TOL x mean(|A|, |B|)), REL_TOL = 0.01; strength/weight metrics divided by each subject's mean|w|. setting-consistent = same sign at all K densities; partially consistent = one sign only, but negligible at some densities; construction-sensitive = both signs appear; no difference = negligible at all densities. Descriptive only, not a significance test.",
+  "rel_tol": 0.01,
+  "tolerance_check": [
+    0.005,
+    0.01,
+    0.02
+  ],
+  "metrics_v2": [
+    "avg_clustering_all",
+    "avg_clustering_lcc",
+    "transitivity_all",
+    "transitivity_lcc",
+    "n_components",
+    "largest_component_size",
+    "n_isolated",
+    "mean_strength_norm",
+    "mean_strength_lcc_norm",
+    "share_negative_edges",
+    "mean_abs_weight_norm"
+  ],
+  "rule_v1": "setting-consistent iff all K deltas share one sign beyond eps (S_M = 1 and n_zero = 0); no difference iff all |delta| <= eps; otherwise construction-sensitive. Descriptive only, not a significance test.",
+  "created_at": "2026-10-21T17:13:26+00:00",
+  "note": "Descriptive only. Five pairs of individuals; not a population result. v2 was fixed after the main pair was seen and before the 4 replication pairs were run."
+}

@@ -1,0 +1,18 @@
+[
+  {
+    "subject": 100206,
+    "source": 34,
+    "status": "negative_cycle",
+    "undefined": 85,
+    "unreachable": 15,
+    "finite": 0
+  },
+  {
+    "subject": 100307,
+    "source": 34,
+    "status": "negative_cycle",
+    "undefined": 74,
+    "unreachable": 26,
+    "finite": 0
+  }
+]

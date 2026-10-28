@@ -1,0 +1,17 @@
+# HCP data must not be committed (HCP Open Access Data Use Terms)
+HCP_PTN1200/
+*.tar.gz
+netmats*.txt
+subjectIDs.txt
+download_record.json
+site_data/
+
+# Generated outputs
+connectome_outputs/
+.ipynb_checkpoints/
+__pycache__/
+
+# Website build artifacts
+website/node_modules/
+website/dist/
+node_modules/

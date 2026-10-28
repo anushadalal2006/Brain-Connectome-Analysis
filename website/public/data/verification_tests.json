@@ -1,0 +1,92 @@
+[
+  {
+    "id": "C05T",
+    "module": "Module A",
+    "title": "Data validation and loader tests",
+    "passed": 27,
+    "total": 27,
+    "status": "PASS",
+    "description": "Validation of HCP netmats format, matrix symmetry, zero diagonal, no NaNs, and subject loader contracts."
+  },
+  {
+    "id": "C07T",
+    "module": "Module B",
+    "title": "Preprocessing and GraphConfiguration",
+    "passed": 28,
+    "total": 28,
+    "status": "PASS",
+    "description": "Configuration hashing, missing value handling, asymmetry checks, and preprocessing pipeline."
+  },
+  {
+    "id": "C08T",
+    "module": "Module C",
+    "title": "Graph construction (proportional density, ties, rounding, zeros, diagonal)",
+    "passed": 25,
+    "total": 25,
+    "status": "PASS",
+    "description": "Proportional density graph build, deterministic tie-breaking (abs_desc_then_ij), signed weights preservation."
+  },
+  {
+    "id": "C10",
+    "module": "Graph Verification",
+    "title": "Checks on the REAL graphs (edges, weights equal source, top-743 by |w|, same config for A and B)",
+    "passed": 18,
+    "total": 18,
+    "status": "PASS",
+    "description": "Verification of subject A and B real graphs at d=0.15: exact edge count (743), top-|w| alignment, identical settings."
+  },
+  {
+    "id": "C11",
+    "module": "Integration A-C",
+    "title": "Foundation integration test (load -> validate -> preprocess -> build graph; invalid input rejected)",
+    "passed": 9,
+    "total": 9,
+    "status": "PASS",
+    "description": "End-to-end foundation pipeline check and defensive rejection of corrupt/incompatible inputs."
+  },
+  {
+    "id": "C18",
+    "module": "Modules D\u2013G",
+    "title": "Statistics, metrics, BFS/DFS and Bellman\u2013Ford",
+    "passed": 22,
+    "total": 22,
+    "status": "PASS",
+    "description": "Full validation of graph metrics, degree/strength distributions, BFS/DFS tree reachability, and Bellman-Ford negative-cycle detection."
+  },
+  {
+    "id": "C22R",
+    "module": "Rule Protocol",
+    "title": "Protocol v2 rule self-checks",
+    "passed": 5,
+    "total": 5,
+    "status": "PASS",
+    "description": "Self-checks for protocol v2: 1% relative tolerance thresholding, scale normalization, and partially consistent classification."
+  },
+  {
+    "id": "C24",
+    "module": "Modules H\u2013I",
+    "title": "Consistency rule, multi-setting behaviour, pairwise comparison",
+    "passed": 16,
+    "total": 16,
+    "status": "PASS",
+    "description": "Pairwise comparison logic, multi-density profile stability, edge retention calculations, and Global-to-Local rankings."
+  },
+  {
+    "id": "C26",
+    "module": "Integration Suite",
+    "title": "End-to-end integration tests, including the source scan for Dijkstra / 1/w / reciprocal",
+    "passed": 21,
+    "total": 21,
+    "status": "PASS",
+    "description": "Full integration audit, AST source scan verifying zero forbidden algorithms (Dijkstra, 1/w, reciprocal weights)."
+  },
+  {
+    "id": "C27",
+    "module": "Pipeline Equivalence",
+    "title": "One-call pipeline reproduces the step-by-step results",
+    "passed": 10,
+    "total": 10,
+    "status": "PASS",
+    "description": "run_pipeline() produces bitwise-identical results across all steps compared to cell-by-cell execution."
+  }
+]

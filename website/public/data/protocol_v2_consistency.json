@@ -1,0 +1,112 @@
+[
+  {
+    "metric":"avg_clustering_all",
+    "v1_label":"construction-sensitive",
+    "v1_direction":"A > B",
+    "label":"partially consistent",
+    "direction":"A > B",
+    "n_pos":5,
+    "n_neg":0,
+    "n_small":1
+  },
+  {
+    "metric":"avg_clustering_lcc",
+    "v1_label":"construction-sensitive",
+    "v1_direction":"A < B",
+    "label":"construction-sensitive",
+    "direction":"A < B",
+    "n_pos":1,
+    "n_neg":4,
+    "n_small":1
+  },
+  {
+    "metric":"transitivity_all",
+    "v1_label":"setting-consistent",
+    "v1_direction":"A < B",
+    "label":"partially consistent",
+    "direction":"A < B",
+    "n_pos":0,
+    "n_neg":5,
+    "n_small":1
+  },
+  {
+    "metric":"transitivity_lcc",
+    "v1_label":"setting-consistent",
+    "v1_direction":"A < B",
+    "label":"partially consistent",
+    "direction":"A < B",
+    "n_pos":0,
+    "n_neg":5,
+    "n_small":1
+  },
+  {
+    "metric":"n_components",
+    "v1_label":"setting-consistent",
+    "v1_direction":"A < B",
+    "label":"setting-consistent",
+    "direction":"A < B",
+    "n_pos":0,
+    "n_neg":6,
+    "n_small":0
+  },
+  {
+    "metric":"largest_component_size",
+    "v1_label":"setting-consistent",
+    "v1_direction":"A > B",
+    "label":"setting-consistent",
+    "direction":"A > B",
+    "n_pos":6,
+    "n_neg":0,
+    "n_small":0
+  },
+  {
+    "metric":"n_isolated",
+    "v1_label":"setting-consistent",
+    "v1_direction":"A < B",
+    "label":"setting-consistent",
+    "direction":"A < B",
+    "n_pos":0,
+    "n_neg":6,
+    "n_small":0
+  },
+  {
+    "metric":"mean_strength_norm",
+    "v1_label":"setting-consistent",
+    "v1_direction":"A > B",
+    "label":"setting-consistent",
+    "direction":"A > B",
+    "n_pos":6,
+    "n_neg":0,
+    "n_small":0
+  },
+  {
+    "metric":"mean_strength_lcc_norm",
+    "v1_label":"setting-consistent",
+    "v1_direction":"A > B",
+    "label":"setting-consistent",
+    "direction":"A > B",
+    "n_pos":6,
+    "n_neg":0,
+    "n_small":0
+  },
+  {
+    "metric":"share_negative_edges",
+    "v1_label":"setting-consistent",
+    "v1_direction":"A < B",
+    "label":"partially consistent",
+    "direction":"A < B",
+    "n_pos":0,
+    "n_neg":5,
+    "n_small":1
+  },
+  {
+    "metric":"mean_abs_weight_norm",
+    "v1_label":"setting-consistent",
+    "v1_direction":"A > B",
+    "label":"setting-consistent",
+    "direction":"A < B",
+    "n_pos":0,
+    "n_neg":6,
+    "n_small":0
+  }
+]

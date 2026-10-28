@@ -1,0 +1,123 @@
+[
+  {
+    "metric":"avg_clustering_all",
+    "main":"partial (A > B)",
+    "pair1":"consistent (A > B)",
+    "pair2":"consistent (A < B)",
+    "pair3":"sensitive (mixed)",
+    "pair4":"sensitive (A < B)",
+    "v2_consistent":"2\/5",
+    "v2_partial":"1\/5",
+    "v1_consistent":"2\/5"
+  },
+  {
+    "metric":"avg_clustering_lcc",
+    "main":"sensitive (A < B)",
+    "pair1":"consistent (A > B)",
+    "pair2":"sensitive (A > B)",
+    "pair3":"sensitive (A > B)",
+    "pair4":"sensitive (A < B)",
+    "v2_consistent":"1\/5",
+    "v2_partial":"0\/5",
+    "v1_consistent":"1\/5"
+  },
+  {
+    "metric":"transitivity_all",
+    "main":"partial (A < B)",
+    "pair1":"consistent (A > B)",
+    "pair2":"sensitive (A > B)",
+    "pair3":"consistent (A < B)",
+    "pair4":"consistent (A < B)",
+    "v2_consistent":"3\/5",
+    "v2_partial":"1\/5",
+    "v1_consistent":"4\/5"
+  },
+  {
+    "metric":"transitivity_lcc",
+    "main":"partial (A < B)",
+    "pair1":"consistent (A > B)",
+    "pair2":"sensitive (A > B)",
+    "pair3":"consistent (A < B)",
+    "pair4":"consistent (A < B)",
+    "v2_consistent":"3\/5",
+    "v2_partial":"1\/5",
+    "v1_consistent":"4\/5"
+  },
+  {
+    "metric":"n_components",
+    "main":"consistent (A < B)",
+    "pair1":"sensitive (A > B)",
+    "pair2":"consistent (A > B)",
+    "pair3":"sensitive (A < B)",
+    "pair4":"sensitive (A < B)",
+    "v2_consistent":"2\/5",
+    "v2_partial":"0\/5",
+    "v1_consistent":"2\/5"
+  },
+  {
+    "metric":"largest_component_size",
+    "main":"consistent (A > B)",
+    "pair1":"sensitive (A < B)",
+    "pair2":"consistent (A < B)",
+    "pair3":"sensitive (A > B)",
+    "pair4":"sensitive (A > B)",
+    "v2_consistent":"2\/5",
+    "v2_partial":"0\/5",
+    "v1_consistent":"2\/5"
+  },
+  {
+    "metric":"n_isolated",
+    "main":"consistent (A < B)",
+    "pair1":"sensitive (A > B)",
+    "pair2":"consistent (A > B)",
+    "pair3":"sensitive (A < B)",
+    "pair4":"sensitive (A < B)",
+    "v2_consistent":"2\/5",
+    "v2_partial":"0\/5",
+    "v1_consistent":"2\/5"
+  },
+  {
+    "metric":"mean_strength_norm",
+    "main":"consistent (A > B)",
+    "pair1":"consistent (A < B)",
+    "pair2":"consistent (A > B)",
+    "pair3":"consistent (A > B)",
+    "pair4":"sensitive (A > B)",
+    "v2_consistent":"4\/5",
+    "v2_partial":"0\/5",
+    "v1_consistent":"3\/5"
+  },
+  {
+    "metric":"mean_strength_lcc_norm",
+    "main":"consistent (A > B)",
+    "pair1":"consistent (A < B)",
+    "pair2":"consistent (A > B)",
+    "pair3":"consistent (A > B)",
+    "pair4":"partial (A > B)",
+    "v2_consistent":"4\/5",
+    "v2_partial":"1\/5",
+    "v1_consistent":"4\/5"
+  },
+  {
+    "metric":"share_negative_edges",
+    "main":"partial (A < B)",
+    "pair1":"consistent (A > B)",
+    "pair2":"partial (A < B)",
+    "pair3":"partial (A < B)",
+    "pair4":"sensitive (A < B)",
+    "v2_consistent":"1\/5",
+    "v2_partial":"3\/5",
+    "v1_consistent":"3\/5"
+  },
+  {
+    "metric":"mean_abs_weight_norm",
+    "main":"consistent (A < B)",
+    "pair1":"consistent (A < B)",
+    "pair2":"consistent (A > B)",
+    "pair3":"consistent (A > B)",
+    "pair4":"partial (A > B)",
+    "v2_consistent":"4\/5",
+    "v2_partial":"1\/5",
+    "v1_consistent":"5\/5"
+  }
+]

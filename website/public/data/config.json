@@ -1,0 +1,56 @@
+{
+  "config": {
+    "density": 0.15,
+    "rank_rule": "abs_weight",
+    "tie_rule": "abs_desc_then_ij",
+    "rounding": "floor_plus_half",
+    "diagonal_policy": "zero_and_exclude",
+    "missing_policy": "median_offdiag_symmetric",
+    "asym_policy": "reject_above_tol_else_average",
+    "symmetry_tol": 1e-05,
+    "signed": true,
+    "directed": false,
+    "path_rule": "bellman_ford_signed_raw_w",
+    "hash": "f1ebb3fdc3"
+  },
+  "density_settings": [
+    0.05,
+    0.1,
+    0.15,
+    0.2,
+    0.25,
+    0.3
+  ],
+  "eps": 1e-09,
+  "compare_metrics": [
+    "avg_clustering_all",
+    "avg_clustering_lcc",
+    "transitivity_all",
+    "transitivity_lcc",
+    "n_components",
+    "largest_component_size",
+    "n_isolated",
+    "mean_strength",
+    "mean_strength_lcc",
+    "share_negative_edges",
+    "mean_abs_weight"
+  ],
+  "consistency_rule": "setting-consistent iff all K deltas share one sign beyond eps (S_M = 1 and n_zero = 0); no difference iff all |delta| <= eps; otherwise construction-sensitive. Descriptive only, not a significance test.",
+  "g2l_map": {
+    "avg_clustering_all": "d_clustering",
+    "avg_clustering_lcc": "d_clustering",
+    "transitivity_all": "d_clustering",
+    "transitivity_lcc": "d_clustering",
+    "n_components": "d_degree",
+    "largest_component_size": "d_degree",
+    "n_isolated": "d_degree",
+    "mean_strength": "d_strength_norm",
+    "mean_strength_lcc": "d_strength_norm",
+    "share_negative_edges": "d_degree",
+    "mean_abs_weight": "d_strength_norm"
+  },
+  "subjects": {
+    "A": "100206",
+    "B": "100307"
+  }
+}

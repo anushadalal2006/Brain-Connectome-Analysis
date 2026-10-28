@@ -1,0 +1,223 @@
+{
+  "source_files": {
+    "A": "/content/hcp_netmats_d100/netmats1.txt#row0",
+    "B": "/content/hcp_netmats_d100/netmats1.txt#row1"
+  },
+  "download_record": [
+    {
+      "file": "netmats_3T_HCP1200_MSMAll_ICAd100_ts2.tar.gz",
+      "s3_uri": "s3://hcp-openaccess/HCP_Resources/GroupAvg/HCP_PTN1200/netmats_3T_HCP1200_MSMAll_ICAd100_ts2.tar.gz",
+      "bytes": 59811309,
+      "etag": "216335c9c3292ca284a3e5ba3ebfcd4f-8",
+      "last_modified_on_s3": "2022-06-03T16:29:43+00:00",
+      "downloaded_at": "2026-10-20T14:37:55+00:00"
+    },
+    {
+      "file": "subjectIDs.txt",
+      "s3_uri": "s3://hcp-openaccess/HCP_Resources/GroupAvg/HCP_PTN1200/subjectIDs.txt",
+      "bytes": 7021,
+      "etag": "b4761ca1654ec8bd5f8c69fe841585c2",
+      "last_modified_on_s3": "2022-06-03T16:28:57+00:00",
+      "downloaded_at": "2026-10-20T14:37:55+00:00"
+    },
+    {
+      "file": "scripts.tar.gz",
+      "s3_uri": "s3://hcp-openaccess/HCP_Resources/GroupAvg/HCP_PTN1200/scripts.tar.gz",
+      "bytes": 9345,
+      "etag": "e37dc2e8592cc5f5f2ef3ad4a14c2bc9",
+      "last_modified_on_s3": "2022-06-03T16:27:31+00:00",
+      "downloaded_at": "2026-10-20T14:37:56+00:00"
+    }
+  ],
+  "all_subject_check": {
+    "subjects": 1003,
+    "valid": 1003,
+    "total_nan": 0,
+    "max_asymmetry": 0.0,
+    "diagonal_values": [
+      0.0
+    ]
+  },
+  "results": [
+    {
+      "subject_id": "100206_vs_100307",
+      "source_file": "/content/hcp_netmats_d100/netmats1.txt",
+      "representation": "netmats1: full correlation, Fisher r-to-Z",
+      "config_hash": "f1ebb3fdc3",
+      "algorithm": "NetworkComparator",
+      "created_at": "2026-10-21T17:12:43+00:00",
+      "is_fixture": false,
+      "kind": "comparison"
+    },
+    {
+      "subject_id": "100206",
+      "source_file": "/content/hcp_netmats_d100/netmats1.txt#row0",
+      "representation": "netmats1: full correlation, Fisher r-to-Z",
+      "config_hash": "f1ebb3fdc3",
+      "algorithm": "HCPNetmatsLoader",
+      "created_at": "2026-10-21T17:12:39+00:00",
+      "is_fixture": false,
+      "kind": "connectivity"
+    },
+    {
+      "subject_id": "100307",
+      "source_file": "/content/hcp_netmats_d100/netmats1.txt#row1",
+      "representation": "netmats1: full correlation, Fisher r-to-Z",
+      "config_hash": "f1ebb3fdc3",
+      "algorithm": "HCPNetmatsLoader",
+      "created_at": "2026-10-21T17:12:39+00:00",
+      "is_fixture": false,
+      "kind": "connectivity"
+    },
+    {
+      "subject_id": "100206",
+      "source_file": "/content/hcp_netmats_d100/netmats1.txt#row0",
+      "representation": "netmats1: full correlation, Fisher r-to-Z",
+      "config_hash": "f1ebb3fdc3",
+      "algorithm": "GraphBuilder",
+      "created_at": "2026-10-21T17:12:39+00:00",
+      "is_fixture": false,
+      "kind": "graph"
+    },
+    {
+      "subject_id": "100307",
+      "source_file": "/content/hcp_netmats_d100/netmats1.txt#row1",
+      "representation": "netmats1: full correlation, Fisher r-to-Z",
+      "config_hash": "f1ebb3fdc3",
+      "algorithm": "GraphBuilder",
+      "created_at": "2026-10-21T17:12:39+00:00",
+      "is_fixture": false,
+      "kind": "graph"
+    },
+    {
+      "subject_id": "100206",
+      "source_file": "/content/hcp_netmats_d100/netmats1.txt#row0",
+      "representation": "netmats1: full correlation, Fisher r-to-Z",
+      "config_hash": "f1ebb3fdc3",
+      "algorithm": "MetricCalculator",
+      "created_at": "2026-10-21T17:12:40+00:00",
+      "is_fixture": false,
+      "kind": "metrics"
+    },
+    {
+      "subject_id": "100307",
+      "source_file": "/content/hcp_netmats_d100/netmats1.txt#row1",
+      "representation": "netmats1: full correlation, Fisher r-to-Z",
+      "config_hash": "f1ebb3fdc3",
+      "algorithm": "MetricCalculator",
+      "created_at": "2026-10-21T17:12:40+00:00",
+      "is_fixture": false,
+      "kind": "metrics"
+    },
+    {
+      "subject_id": "100206_vs_100307",
+      "source_file": "/content/hcp_netmats_d100/netmats1.txt",
+      "representation": "netmats1: full correlation, Fisher r-to-Z",
+      "config_hash": "f1ebb3fdc3",
+      "algorithm": "MultiSettingAnalyzer",
+      "created_at": "2026-10-21T17:12:45+00:00",
+      "is_fixture": false,
+      "kind": "multi_setting"
+    },
+    {
+      "subject_id": "100206",
+      "source_file": "/content/hcp_netmats_d100/netmats1.txt#row0",
+      "representation": "netmats1: full correlation, Fisher r-to-Z",
+      "config_hash": "f1ebb3fdc3",
+      "algorithm": "Preprocessor",
+      "created_at": "2026-10-21T17:12:39+00:00",
+      "is_fixture": false,
+      "kind": "processed"
+    },
+    {
+      "subject_id": "100307",
+      "source_file": "/content/hcp_netmats_d100/netmats1.txt#row1",
+      "representation": "netmats1: full correlation, Fisher r-to-Z",
+      "config_hash": "f1ebb3fdc3",
+      "algorithm": "Preprocessor",
+      "created_at": "2026-10-21T17:12:39+00:00",
+      "is_fixture": false,
+      "kind": "processed"
+    },
+    {
+      "subject_id": "100206",
+      "source_file": "/content/hcp_netmats_d100/netmats1.txt#row0",
+      "representation": "netmats1: full correlation, Fisher r-to-Z",
+      "config_hash": "f1ebb3fdc3",
+      "algorithm": "ShortestPathAnalyzer",
+      "created_at": "2026-10-21T17:12:40+00:00",
+      "is_fixture": false,
+      "kind": "shortest_path"
+    },
+    {
+      "subject_id": "100307",
+      "source_file": "/content/hcp_netmats_d100/netmats1.txt#row1",
+      "representation": "netmats1: full correlation, Fisher r-to-Z",
+      "config_hash": "f1ebb3fdc3",
+      "algorithm": "ShortestPathAnalyzer",
+      "created_at": "2026-10-21T17:12:40+00:00",
+      "is_fixture": false,
+      "kind": "shortest_path"
+    },
+    {
+      "subject_id": "100206",
+      "source_file": "/content/hcp_netmats_d100/netmats1.txt#row0",
+      "representation": "netmats1: full correlation, Fisher r-to-Z",
+      "config_hash": "f1ebb3fdc3",
+      "algorithm": "StatisticalAnalyzer",
+      "created_at": "2026-10-21T17:12:39+00:00",
+      "is_fixture": false,
+      "kind": "statistics"
+    },
+    {
+      "subject_id": "100307",
+      "source_file": "/content/hcp_netmats_d100/netmats1.txt#row1",
+      "representation": "netmats1: full correlation, Fisher r-to-Z",
+      "config_hash": "f1ebb3fdc3",
+      "algorithm": "StatisticalAnalyzer",
+      "created_at": "2026-10-21T17:12:39+00:00",
+      "is_fixture": false,
+      "kind": "statistics"
+    },
+    {
+      "subject_id": "100206",
+      "source_file": "/content/hcp_netmats_d100/netmats1.txt#row0",
+      "representation": "netmats1: full correlation, Fisher r-to-Z",
+      "config_hash": "f1ebb3fdc3",
+      "algorithm": "TraversalAnalyzer",
+      "created_at": "2026-10-21T17:12:40+00:00",
+      "is_fixture": false,
+      "kind": "traversal"
+    },
+    {
+      "subject_id": "100206",
+      "source_file": "/content/hcp_netmats_d100/netmats1.txt#row0",
+      "representation": "netmats1: full correlation, Fisher r-to-Z",
+      "config_hash": "f1ebb3fdc3",
+      "algorithm": "TraversalAnalyzer",
+      "created_at": "2026-10-21T17:12:40+00:00",
+      "is_fixture": false,
+      "kind": "traversal"
+    },
+    {
+      "subject_id": "100307",
+      "source_file": "/content/hcp_netmats_d100/netmats1.txt#row1",
+      "representation": "netmats1: full correlation, Fisher r-to-Z",
+      "config_hash": "f1ebb3fdc3",
+      "algorithm": "TraversalAnalyzer",
+      "created_at": "2026-10-21T17:12:40+00:00",
+      "is_fixture": false,
+      "kind": "traversal"
+    },
+    {
+      "subject_id": "100307",
+      "source_file": "/content/hcp_netmats_d100/netmats1.txt#row1",
+      "representation": "netmats1: full correlation, Fisher r-to-Z",
+      "config_hash": "f1ebb3fdc3",
+      "algorithm": "TraversalAnalyzer",
+      "created_at": "2026-10-21T17:12:40+00:00",
+      "is_fixture": false,
+      "kind": "traversal"
+    }
+  ]
+}

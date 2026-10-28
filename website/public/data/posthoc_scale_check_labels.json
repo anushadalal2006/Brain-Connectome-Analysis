@@ -1,0 +1,29 @@
+[
+  {
+    "metric":"mean_strength",
+    "raw_label":"setting-consistent",
+    "raw_direction":"A > B",
+    "normalised_label":"setting-consistent",
+    "normalised_direction":"A > B",
+    "n_pos":6,
+    "n_neg":0
+  },
+  {
+    "metric":"mean_strength_lcc",
+    "raw_label":"setting-consistent",
+    "raw_direction":"A > B",
+    "normalised_label":"setting-consistent",
+    "normalised_direction":"A > B",
+    "n_pos":6,
+    "n_neg":0
+  },
+  {
+    "metric":"mean_abs_weight",
+    "raw_label":"setting-consistent",
+    "raw_direction":"A > B",
+    "normalised_label":"setting-consistent",
+    "normalised_direction":"A < B",
+    "n_pos":0,
+    "n_neg":6
+  }
+]
