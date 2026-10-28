@@ -170,7 +170,7 @@ export const VerificationPage: React.FC = () => {
               </li>
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                 <CheckCircle2 size={16} style={{ color: '#059669' }} />
-                <span><strong>No Reciprocal Weights:</strong> Verified zero usage of <code>1/w</code>, <code>1.0/w</code>, or <code>1 - w</code> conversions.</span>
+                <span><strong>No Reciprocal Weights:</strong> The C26 source scan finds no <code>1/w</code>, <code>1.0/w</code>, <code>np.reciprocal</code> or <code>np.divide(1, w)</code> on weights.</span>
               </li>
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                 <CheckCircle2 size={16} style={{ color: '#059669' }} />
