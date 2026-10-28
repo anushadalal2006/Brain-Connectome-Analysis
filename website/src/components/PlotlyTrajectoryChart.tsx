@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Plot from './Plot';
-import { MultiSettingValues, ProtocolV2Values } from '../types';
+import { MultiSettingValues, ProtocolV2Values, ConfigData } from '../types';
+import { useJSON, PENDING } from '../data';
 import { useTheme } from '../context/ThemeContext';
 
 interface PlotlyTrajectoryChartProps {
@@ -18,20 +19,11 @@ export const PlotlyTrajectoryChart: React.FC<PlotlyTrajectoryChartProps> = ({
 }) => {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
-  const [subA, setSubA] = useState('100206');
-  const [subB, setSubB] = useState('100307');
+  const cfg = useJSON<ConfigData>('config.json');
+  const subA = cfg?.subjects.A ?? PENDING;
+  const subB = cfg?.subjects.B ?? PENDING;
 
-  useEffect(() => {
-    fetch(`${import.meta.env.BASE_URL}data/config.json`)
-      .then((r) => r.json())
-      .then((cfg) => {
-        if (cfg.subjects?.A) setSubA(cfg.subjects.A);
-        if (cfg.subjects?.B) setSubB(cfg.subjects.B);
-      })
-      .catch(() => {});
-  }, []);
-
-  const densities = [0.05, 0.10, 0.15, 0.20, 0.25, 0.30];
+  const densities = (mode === 'v2' ? v2Values : v1Values).map((r) => r.density as number);
   const aVals: number[] = [];
   const bVals: number[] = [];
 
@@ -64,8 +56,8 @@ export const PlotlyTrajectoryChart: React.FC<PlotlyTrajectoryChartProps> = ({
       type: 'scatter',
       mode: 'lines+markers',
       name: `Subject A (${subA})`,
-      line: { color: '#ea580c', width: 2.5 },
-      marker: { size: 8, color: '#ea580c' },
+      line: { color: isDark ? '#fb923c' : '#ea580c', width: 2.5 },
+      marker: { size: 8, color: isDark ? '#fb923c' : '#ea580c' },
     },
     {
       x: densities,
@@ -73,8 +65,8 @@ export const PlotlyTrajectoryChart: React.FC<PlotlyTrajectoryChartProps> = ({
       type: 'scatter',
       mode: 'lines+markers',
       name: `Subject B (${subB})`,
-      line: { color: '#7c3aed', width: 2.5 },
-      marker: { size: 8, color: '#7c3aed' },
+      line: { color: isDark ? '#a78bfa' : '#7c3aed', width: 2.5 },
+      marker: { size: 8, color: isDark ? '#a78bfa' : '#7c3aed' },
     },
   ];
 

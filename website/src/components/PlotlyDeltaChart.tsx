@@ -65,7 +65,7 @@ export const PlotlyDeltaChart: React.FC<PlotlyDeltaChartProps> = ({
   const currentMetrics = mode === 'v2' ? v2Metrics : v1Metrics;
 
   // Compute densities, deltas, and tolerance band
-  const densities = [0.05, 0.10, 0.15, 0.20, 0.25, 0.30];
+  const densities = (mode === 'v2' ? v2Values : v1Values).map((r) => r.density as number);
   const deltas: number[] = [];
   const upperBand: number[] = [];
   const lowerBand: number[] = [];

@@ -1,40 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { CaveatBanner } from '../components/CaveatBanner';
 import {
   ShieldAlert,
   AlertTriangle,
   History,
 } from 'lucide-react';
-import { ReplicationStructure } from '../types';
+import { ReplicationStructure, ConfigData } from '../types';
+import { useJSON, PENDING } from '../data';
 
 export const LimitationsPage: React.FC = () => {
-  const [subA, setSubA] = useState('100206');
-  const [subB, setSubB] = useState('100307');
-  const [configHash, setConfigHash] = useState('f1ebb3fdc3');
-  const [isoA, setIsoA] = useState(15);
-  const [isoB, setIsoB] = useState(26);
-
-  useEffect(() => {
-    fetch(`${import.meta.env.BASE_URL}data/config.json`)
-      .then((r) => r.json())
-      .then((cfg) => {
-        if (cfg.subjects?.A) setSubA(cfg.subjects.A);
-        if (cfg.subjects?.B) setSubB(cfg.subjects.B);
-        if (cfg.config?.hash) setConfigHash(cfg.config.hash);
-      })
-      .catch(() => { });
-
-    fetch(`${import.meta.env.BASE_URL}data/replication_structure_d015.json`)
-      .then((r) => r.json())
-      .then((struct: ReplicationStructure[]) => {
-        const main = struct.find((s) => s.pair === 'main');
-        if (main) {
-          setIsoA(main.n_isolated_A);
-          setIsoB(main.n_isolated_B);
-        }
-      })
-      .catch(() => { });
-  }, []);
+  const cfg = useJSON<ConfigData>('config.json');
+  const struct = useJSON<ReplicationStructure[]>('replication_structure_d015.json');
+  const main = struct?.find((r) => r.pair === 'main');
+  const subA = cfg?.subjects.A ?? PENDING;
+  const subB = cfg?.subjects.B ?? PENDING;
+  const configHash = cfg?.config.hash ?? PENDING;
+  const isoA = main?.n_isolated_A ?? PENDING;
+  const isoB = main?.n_isolated_B ?? PENDING;
 
   const caveats = [
     {
@@ -143,7 +125,7 @@ export const LimitationsPage: React.FC = () => {
             </div>
 
             <div style={{ padding: '1rem', background: 'var(--bg-tertiary)', borderRadius: '0.5rem' }}>
-              <div style={{ fontWeight: 700, color: '#059669', marginBottom: '0.4rem' }}>
+              <div style={{ fontWeight: 700, color: 'var(--badge-consistent-text)', marginBottom: '0.4rem' }}>
                 ✅ Permitted Descriptive Standards
               </div>
               <ul style={{ paddingLeft: '1.25rem', fontSize: '0.825rem', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
