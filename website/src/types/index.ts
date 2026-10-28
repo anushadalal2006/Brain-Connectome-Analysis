@@ -325,3 +325,27 @@ export interface VerificationTest {
   status: string;
   description: string;
 }
+
+export interface ReplicationLabelV1 {
+  pair: string;
+  A: number;
+  B: number;
+  metric: string;
+  label: string;
+  direction: string;
+}
+
+export interface ReplicationMeta {
+  pairs: string[][];
+  pair_rule: string;
+  config_hash: string;
+  density_settings: number[];
+  eps: number;
+  rule_v2: string;
+  rel_tol: number;
+  tolerance_check: number[];
+  metrics_v2: string[];
+  rule_v1: string;
+  created_at: string;
+  note: string;
+}

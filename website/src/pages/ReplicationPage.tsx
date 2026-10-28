@@ -1,92 +1,107 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { CaveatBanner } from '../components/CaveatBanner';
 import { DataTable, Column } from '../components/DataTable';
+import { ChartCard } from '../components/ChartCard';
+import {
+  LabelHeatmap,
+  LabelLegend,
+  V1V2Bars,
+  ToleranceBars,
+  IsolatedPerPair,
+  ScalePerSubject,
+  PairInfo,
+} from '../components/ReplicationCharts';
 import {
   ReplicationSummary,
   ReplicationTolerance,
   ReplicationStructure,
+  ReplicationLabelV2,
+  ReplicationLabelV1,
+  ReplicationMeta,
 } from '../types';
-import { GitBranch, ShieldCheck, Sliders, Database } from 'lucide-react';
+import { GitBranch, ShieldCheck, Sliders, Database, Table2 } from 'lucide-react';
+import { useJSON, PENDING } from '../data';
+import { labelCat, parseFrac } from '../metrics';
+
+const badgeClass = (label: string) => {
+  const cat = labelCat(label);
+  return cat === 'consistent' ? 'badge-consistent' : cat === 'partial' ? 'badge-partial' : cat === 'sensitive' ? 'badge-sensitive' : 'badge-neutral';
+};
+
+const LabelBadge: React.FC<{ label: string; direction?: string }> = ({ label, direction }) => (
+  <span className={`badge ${badgeClass(label)}`} style={{ textTransform: 'none', letterSpacing: 0 }}>
+    {label}{direction ? ` (${direction})` : ''}
+  </span>
+);
+
+const DirectionNote: React.FC = () => (
+  <p className="direction-note">
+    Direction (A &gt; B or A &lt; B) is arbitrary across pairs: which subject is called A is a matter of ID order. Only the labels can replicate, never the direction.
+  </p>
+);
 
 export const ReplicationPage: React.FC = () => {
-  const [summary, setSummary] = useState<ReplicationSummary[]>([]);
-  const [tolerance, setTolerance] = useState<ReplicationTolerance[]>([]);
-  const [structure, setStructure] = useState<ReplicationStructure[]>([]);
-  const [loading, setLoading] = useState(true);
+  const summaryData = useJSON<ReplicationSummary[]>('replication_summary.json');
+  const toleranceData = useJSON<ReplicationTolerance[]>('replication_tolerance_check.json');
+  const structureData = useJSON<ReplicationStructure[]>('replication_structure_d015.json');
+  const labelsV2 = useJSON<ReplicationLabelV2[]>('replication_labels_v2.json');
+  const labelsV1 = useJSON<ReplicationLabelV1[]>('replication_labels_v1.json');
+  const meta = useJSON<ReplicationMeta>('replication_meta.json');
+  const summary = summaryData ?? [];
+  const tolerance = toleranceData ?? [];
+  const structure = structureData ?? [];
 
-  useEffect(() => {
-    Promise.all([
-      fetch(`${import.meta.env.BASE_URL}data/replication_summary.json`).then((r) => r.json()),
-      fetch(`${import.meta.env.BASE_URL}data/replication_tolerance_check.json`).then((r) => r.json()),
-      fetch(`${import.meta.env.BASE_URL}data/replication_structure_d015.json`).then((r) => r.json()),
-    ])
-      .then(([sumData, tolData, structData]) => {
-        setSummary(sumData);
-        setTolerance(tolData);
-        setStructure(structData);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error fetching replication data:', err);
-        setLoading(false);
-      });
-  }, []);
+  const [pairKey, setPairKey] = useState('main');
 
-  const renderBadge = (val: string) => {
-    if (!val) return '—';
-    const lower = val.toLowerCase();
-    if (lower.startsWith('consistent')) {
-      return <span className="badge badge-consistent">{val}</span>;
-    }
-    if (lower.startsWith('partial')) {
-      return <span className="badge badge-partial">{val}</span>;
-    }
-    return <span className="badge badge-sensitive">{val}</span>;
+  // Pairs in the order of replication_meta.json; keys match the other files.
+  const pairs: PairInfo[] = (meta?.pairs ?? []).map((p, i) => ({
+    key: i === 0 ? 'main' : `pair${i}`,
+    title: i === 0 ? `Main (${p[0]}–${p[1]})` : `Pair ${i} (${p[0]}–${p[1]})`,
+  }));
+  const totalPairs = meta ? meta.pairs.length : PENDING;
+  const nReplication = meta ? meta.pairs.length - 1 : PENDING;
+  const K = meta ? meta.density_settings.length : PENDING;
+  const relTolPct = meta ? `${meta.rel_tol * 100}%` : PENDING;
+  const tolerances = meta?.tolerance_check ?? [];
+  const metrics = meta?.metrics_v2 ?? [];
+
+  const count = (metric: string) => parseFrac(summary.find((s) => s.metric === metric)?.v2_consistent);
+  const ofText = (f: [number, number] | null) => (f ? `${f[0]} of ${f[1]}` : PENDING);
+  const sensitiveOf = (metric: string) => {
+    const r = labelsV2?.filter((l) => l.metric === metric);
+    return r && r.length ? `${r.filter((l) => labelCat(l.label) === 'sensitive').length} of ${r.length}` : PENDING;
   };
 
+  const scales = structure.flatMap((r) => [r.mean_abs_w_all_A, r.mean_abs_w_all_B]);
+  const scaleMin = scales.length ? Math.min(...scales).toFixed(2) : PENDING;
+  const scaleMax = scales.length ? Math.max(...scales).toFixed(2) : PENDING;
+
+  const isos = structure.flatMap((r) => [r.n_isolated_A, r.n_isolated_B]);
+  const isoMin = isos.length ? Math.min(...isos) : PENDING;
+  const isoMax = isos.length ? Math.max(...isos) : PENDING;
+  const nStable = toleranceData && meta
+    ? tolerance.filter((r) => new Set(meta.tolerance_check.map((t) => (r as any)[`consistent_at_${+(t * 100).toFixed(1)}%`])).size === 1).length
+    : PENDING;
+
+  const renderBadge = (val: string) => (val ? <LabelBadge label={val} /> : '—');
+
   const summaryColumns: Column<ReplicationSummary>[] = [
-    {
-      key: 'metric',
-      header: 'Metric',
-      render: (r) => <span className="mono" style={{ fontWeight: 600 }}>{r.metric}</span>,
-    },
-    { key: 'main', header: 'Main Pair (100206–100307)', render: (r) => renderBadge(r.main) },
-    { key: 'pair1', header: 'Pair 1 (100408–100610)', render: (r) => renderBadge(r.pair1) },
-    { key: 'pair2', header: 'Pair 2 (101006–101107)', render: (r) => renderBadge(r.pair2) },
-    { key: 'pair3', header: 'Pair 3 (101309–101915)', render: (r) => renderBadge(r.pair3) },
-    { key: 'pair4', header: 'Pair 4 (102008–102109)', render: (r) => renderBadge(r.pair4) },
-    {
-      key: 'v2_consistent',
-      header: 'v2 Consistent',
-      align: 'center',
-      render: (r) => <span className="mono" style={{ fontWeight: 700 }}>{r.v2_consistent}</span>,
-    },
-    {
-      key: 'v2_partial',
-      header: 'v2 Partial',
-      align: 'center',
-      render: (r) => <span className="mono">{r.v2_partial}</span>,
-    },
-    {
-      key: 'v1_consistent',
-      header: 'v1 Consistent',
-      align: 'center',
-      render: (r) => <span className="mono" style={{ color: 'var(--text-muted)' }}>{r.v1_consistent}</span>,
-    },
+    { key: 'metric', header: 'Metric', render: (r) => <span className="mono" style={{ fontWeight: 600 }}>{r.metric}</span> },
+    ...pairs.map((p) => ({ key: p.key, header: p.title, render: (r: ReplicationSummary) => renderBadge((r as any)[p.key]) })),
+    { key: 'v2_consistent', header: 'v2 consistent', align: 'center', render: (r) => <span className="mono" style={{ fontWeight: 700 }}>{r.v2_consistent}</span> },
+    { key: 'v2_partial', header: 'v2 partial', align: 'center', render: (r) => <span className="mono">{r.v2_partial}</span> },
+    { key: 'v1_consistent', header: 'Frozen v1 consistent', align: 'center', render: (r) => <span className="mono" style={{ color: 'var(--text-muted)' }}>{r.v1_consistent}</span> },
   ];
 
+  const tolKey = (t: number, kind: 'consistent' | 'sensitive') => `${kind}_at_${+(t * 100).toFixed(1)}%`;
   const toleranceColumns: Column<ReplicationTolerance>[] = [
-    {
-      key: 'metric',
-      header: 'Metric',
-      render: (r) => <span className="mono" style={{ fontWeight: 600 }}>{r.metric}</span>,
-    },
-    { key: 'consistent_at_0.5%', header: 'Consistent (0.5%)', align: 'center', render: (r) => <span className="mono">{r['consistent_at_0.5%']}</span> },
-    { key: 'sensitive_at_0.5%', header: 'Sensitive (0.5%)', align: 'center', render: (r) => <span className="mono">{r['sensitive_at_0.5%']}</span> },
-    { key: 'consistent_at_1%', header: 'Consistent (1.0% - Primary)', align: 'center', render: (r) => <span className="mono" style={{ fontWeight: 700, color: '#059669' }}>{r['consistent_at_1%']}</span> },
-    { key: 'sensitive_at_1%', header: 'Sensitive (1.0% - Primary)', align: 'center', render: (r) => <span className="mono" style={{ fontWeight: 700 }}>{r['sensitive_at_1%']}</span> },
-    { key: 'consistent_at_2%', header: 'Consistent (2.0%)', align: 'center', render: (r) => <span className="mono">{r['consistent_at_2%']}</span> },
-    { key: 'sensitive_at_2%', header: 'Sensitive (2.0%)', align: 'center', render: (r) => <span className="mono">{r['sensitive_at_2%']}</span> },
+    { key: 'metric', header: 'Metric', render: (r) => <span className="mono" style={{ fontWeight: 600 }}>{r.metric}</span> },
+    ...tolerances.flatMap((t) => (['consistent', 'sensitive'] as const).map((kind) => ({
+      key: tolKey(t, kind),
+      header: `${kind === 'consistent' ? 'Consistent' : 'Sensitive'} (${t * 100}%${meta && t === meta.rel_tol ? ', primary' : ''})`,
+      align: 'center' as const,
+      render: (r: ReplicationTolerance) => <span className="mono" style={meta && t === meta.rel_tol ? { fontWeight: 700 } : {}}>{(r as any)[tolKey(t, kind)]}</span>,
+    }))),
   ];
 
   const structureColumns: Column<ReplicationStructure>[] = [
@@ -99,124 +114,181 @@ export const ReplicationPage: React.FC = () => {
     { key: 'largest_B', header: 'LCC B', align: 'right', render: (r) => <span className="mono">{r.largest_B}</span> },
     { key: 'share_neg_A', header: 'Neg % A', align: 'right', render: (r) => <span className="mono">{(r.share_neg_A * 100).toFixed(1)}%</span> },
     { key: 'share_neg_B', header: 'Neg % B', align: 'right', render: (r) => <span className="mono">{(r.share_neg_B * 100).toFixed(1)}%</span> },
-    { key: 'mean_abs_w_all_A', header: 'Scale A (|w|)', align: 'right', render: (r) => <span className="mono">{r.mean_abs_w_all_A.toFixed(4)}</span> },
-    { key: 'mean_abs_w_all_B', header: 'Scale B (|w|)', align: 'right', render: (r) => <span className="mono">{r.mean_abs_w_all_B.toFixed(4)}</span> },
+    { key: 'mean_abs_w_all_A', header: 'Scale A (mean |w|)', align: 'right', render: (r) => <span className="mono">{r.mean_abs_w_all_A.toFixed(3)}</span> },
+    { key: 'mean_abs_w_all_B', header: 'Scale B (mean |w|)', align: 'right', render: (r) => <span className="mono">{r.mean_abs_w_all_B.toFixed(3)}</span> },
   ];
 
-  const totalPairs = structure.length || 5;
-  const normStrengthRow = summary.find((s) => s.metric === 'mean_strength_norm');
-  const transitivityRow = summary.find((s) => s.metric === 'transitivity_all');
-  const clusteringLccRow = summary.find((s) => s.metric === 'avg_clustering_lcc');
-  const componentsRow = summary.find((s) => s.metric === 'n_components');
-
-  const normStrengthCount = normStrengthRow?.v2_consistent ? normStrengthRow.v2_consistent.split('/')[0] : '4';
-  const transitivityCount = transitivityRow?.v2_consistent ? transitivityRow.v2_consistent.split('/')[0] : '3';
-  const clusteringConsistent = clusteringLccRow?.v2_consistent ? parseInt(clusteringLccRow.v2_consistent.split('/')[0], 10) : 1;
-  const clusteringSensitiveCount = totalPairs - clusteringConsistent;
-  const componentsCount = componentsRow?.v2_consistent ? componentsRow.v2_consistent.split('/')[0] : '2';
-  const componentsSensitiveCount = totalPairs - parseInt(componentsCount, 10);
+  // Per-pair detail: v2 rows with the matching frozen v1 label beside them.
+  const detailRows = (labelsV2 ?? []).filter((r) => r.pair === pairKey).map((r) => {
+    const v1 = labelsV1?.find((x) => x.pair === pairKey && x.metric === r.metric.replace(/_norm$/, ''));
+    return { ...r, v1_metric: v1?.metric ?? '', v1_label: v1?.label ?? '', v1_direction: v1?.direction ?? '' };
+  });
+  type DetailRow = (typeof detailRows)[number];
+  const detailColumns: Column<DetailRow>[] = [
+    { key: 'metric', header: 'Metric (v2)', render: (r) => <span className="mono" style={{ fontWeight: 600 }}>{r.metric}</span> },
+    { key: 'label', header: 'Protocol v2 label', render: (r) => <LabelBadge label={r.label} direction={r.direction} /> },
+    { key: 'n_pos', header: 'A>B', align: 'center', render: (r) => <span className="mono">{r.n_pos}</span> },
+    { key: 'n_neg', header: 'A<B', align: 'center', render: (r) => <span className="mono">{r.n_neg}</span> },
+    { key: 'n_small', header: 'negligible', align: 'center', render: (r) => <span className="mono">{r.n_small}</span> },
+    { key: 'v1_label', header: 'Frozen v1 label', render: (r) => (r.v1_label ? <span><LabelBadge label={r.v1_label} direction={r.v1_direction} />{r.v1_metric !== r.metric && <span className="mono" style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginLeft: '0.35rem' }}>({r.v1_metric}, raw)</span>}</span> : '—') },
+  ];
+  const selectedPair = pairs.find((p) => p.key === pairKey);
 
   return (
     <div className="container" style={{ paddingBottom: '3rem' }}>
       <div className="page-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-          <span className="badge badge-neutral">Pre-Specified Validation</span>
-          <span className="badge badge-consistent">{totalPairs} Subject Pairs</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
+          <span className="badge badge-neutral">Pre-Specified Replication</span>
+          <span className="badge badge-neutral">{totalPairs} subject pairs</span>
         </div>
-        <h1 className="page-title">Replication Across 4 Pre-Specified Pairs</h1>
+        <h1 className="page-title">Replication Across {nReplication} Pre-Specified Pairs</h1>
         <p className="page-subtitle">
-          Evaluation of Protocol v2 consistency labels across {totalPairs} pre-specified subject pairs, relative tolerance sensitivity checks (0.5%, 1%, 2%), and baseline structural variation.
+          The same multi-density analysis on {nReplication} more pairs, fixed before they were run. Protocol v2 labels are primary; frozen v1 labels are shown beside them.
         </p>
       </div>
 
       <CaveatBanner />
 
-      {/* Pre-specification and Methodology Callout */}
       <section className="card" style={{ marginBottom: '2rem', borderLeft: '4px solid var(--accent-blue)' }}>
         <h2 className="card-title">
           <GitBranch size={20} style={{ color: 'var(--accent-blue)' }} />
-          Pre-Specified Replication Protocol
+          Pre-specified replication protocol
         </h2>
         <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
           <p>
-            <strong>Fixed Selection Rule:</strong> The 4 replication pairs were chosen using a deterministic, objective rule: <em>the next 8 subject IDs after A (100206) and B (100307) in the HCP subject list, paired strictly in order</em>. The subjects and Protocol v2 rules were permanently frozen before these pairs were analyzed.
+            <strong>Selection rule:</strong> {meta?.pair_rule ?? PENDING}. Protocol v2 was written after the main pair was seen and frozen before the replication pairs were run.
           </p>
           <p>
-            <strong>Pairs Analyzed:</strong> Main (100206–100307), Pair 1 (100408–100610), Pair 2 (101006–101107), Pair 3 (101309–101915), Pair 4 (102008–102109).
+            <strong>Pairs:</strong> {pairs.map((p) => p.title).join(', ') || PENDING}.
           </p>
           <p>
-            <strong>Arbitrary Direction Principle:</strong> The direction of difference (<span className="mono">A &gt; B</span> vs <span className="mono">A &lt; B</span>) is arbitrary across pairs because the assignment of which subject is "A" or "B" is arbitrary. <strong>Only the consistency classification label (setting-consistent, partially consistent, construction-sensitive) can replicate.</strong>
+            <strong>Direction is arbitrary across pairs.</strong> Which subject is called A is a matter of ID order, so A &gt; B in one pair and A &lt; B in another is not a contradiction. Only the label (setting-consistent, partially consistent, construction-sensitive) can replicate.
           </p>
         </div>
       </section>
 
-      {/* Summary Rates Highlights */}
       <section style={{ marginBottom: '2.5rem' }}>
-        <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem', color: 'var(--text-primary)' }}>
-          Replication Findings Summary (Descriptive)
-        </h2>
+        <h2 className="section-title">Replication findings (descriptive)</h2>
         <div className="grid-4">
           <div className="card">
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Normalised Strength & |w|</div>
-            <div style={{ fontSize: '1.85rem', fontWeight: 700, color: '#059669' }}>{normStrengthCount} of {totalPairs} pairs</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>Most stable metric across densities</div>
+            <div className="stat-label">Normalised strength &amp; |w|</div>
+            <div className="stat-value">{ofText(count('mean_strength_norm'))}</div>
+            <div className="stat-sub">pairs setting-consistent (v2)</div>
           </div>
-
           <div className="card">
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Transitivity</div>
-            <div style={{ fontSize: '1.85rem', fontWeight: 700, color: '#059669' }}>{transitivityCount} of {totalPairs} pairs</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>Mostly stable across settings</div>
+            <div className="stat-label">Transitivity</div>
+            <div className="stat-value">{ofText(count('transitivity_all'))}</div>
+            <div className="stat-sub">pairs setting-consistent (v2)</div>
           </div>
-
           <div className="card">
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Clustering of Largest Comp</div>
-            <div style={{ fontSize: '1.85rem', fontWeight: 700, color: '#db2777' }}>{clusteringSensitiveCount} of {totalPairs} pairs</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>Construction-sensitive in {clusteringSensitiveCount}/{totalPairs}</div>
+            <div className="stat-label">Clustering of largest component</div>
+            <div className="stat-value">{sensitiveOf('avg_clustering_lcc')}</div>
+            <div className="stat-sub">pairs construction-sensitive (v2)</div>
           </div>
-
           <div className="card">
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Fragmentation Measures</div>
-            <div style={{ fontSize: '1.85rem', fontWeight: 700, color: '#d97706' }}>{componentsCount} of {totalPairs} pairs</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>Consistent in {componentsCount}/{totalPairs}, sensitive in {componentsSensitiveCount}/{totalPairs}</div>
+            <div className="stat-label">Fragmentation measures</div>
+            <div className="stat-value">{ofText(count('n_components'))}</div>
+            <div className="stat-sub">pairs setting-consistent; sensitive in {sensitiveOf('n_components')}</div>
           </div>
         </div>
       </section>
 
-      {/* Color-Coded v2 Label Grid */}
+      {/* Label heatmap */}
       <section style={{ marginBottom: '2.5rem' }}>
-        <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.75rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <h2 className="section-title">
           <ShieldCheck size={20} style={{ color: 'var(--accent-blue)' }} />
-          Protocol v2 Consistency Label Grid Across All 5 Pairs
+          Protocol v2 labels for every metric and pair
         </h2>
-        <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-          Color-coded grid with explicit text labels. Badges: <span className="badge badge-consistent">Consistent</span> (emerald green), <span className="badge badge-partial">Partial</span> (amber), <span className="badge badge-sensitive">Sensitive</span> (purple).
-        </p>
-        {loading ? <div>Loading replication grid...</div> : <DataTable data={summary} columns={summaryColumns} pageSize={15} />}
+        <ChartCard
+          title="Normalised strength and |w| are setting-consistent in most pairs; clustering of the largest component is construction-sensitive in most"
+          caption={<>Each cell is one metric in one pair, coloured by its protocol v2 label with the label and direction written inside. Read across a row to see whether a label replicates. <DirectionNote /></>}
+          sources={['replication_labels_v2.json', 'replication_meta.json']}
+          legend={<LabelLegend />}
+          minWidth={720}
+        >
+          {labelsV2 && pairs.length ? <LabelHeatmap labels={labelsV2} metrics={metrics} pairs={pairs} /> : <div style={{ height: 500 }}>Loading chart…</div>}
+        </ChartCard>
+
+        <div className="grid-2">
+          <ChartCard
+            title="Frozen v1 vs protocol v2: where the raw-value rule counted more pairs as consistent"
+            caption={<>Number of pairs labelled setting-consistent under each rule. Where the grey (v1) bar is longer, v1 counted a pair as consistent that v2 sets aside, either because a gap was under {relTolPct} or because the raw difference was a per-subject scale effect.</>}
+            sources={['replication_summary.json']}
+          >
+            {summaryData ? <V1V2Bars summary={summary} /> : <div style={{ height: 500 }}>Loading chart…</div>}
+          </ChartCard>
+          <ChartCard
+            title={`${nStable} of ${tolerance.length || PENDING} metrics keep the same count at every tolerance; the pattern does not hinge on the 1% choice`}
+            caption={<>Setting-consistent pairs per metric with a 0.5%, 1% (primary) and 2% minimum gap. Similar bars across the three tolerances mean the pattern does not depend on the exact choice of 1%.</>}
+            sources={['replication_tolerance_check.json']}
+          >
+            {toleranceData && tolerances.length ? <ToleranceBars rows={tolerance} tolerances={tolerances} /> : <div style={{ height: 500 }}>Loading chart…</div>}
+          </ChartCard>
+        </div>
+
+        <h3 style={{ fontSize: '1rem', fontWeight: 600, margin: '0.5rem 0 0.75rem', color: 'var(--text-primary)' }}>Summary table</h3>
+        {summaryData ? <DataTable data={summary} columns={summaryColumns} pageSize={15} /> : <div>Loading…</div>}
       </section>
 
-      {/* Tolerance Robustness Check */}
+      {/* Per-pair detail */}
       <section style={{ marginBottom: '2.5rem' }}>
-        <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.75rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Sliders size={20} style={{ color: 'var(--accent-blue)' }} />
-          Tolerance Check Across Relative Thresholds (0.5%, 1.0%, 2.0%)
+        <h2 className="section-title">
+          <Table2 size={20} style={{ color: 'var(--accent-blue)' }} />
+          One pair in detail
         </h2>
-        <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-          Number of pairs classified as setting-consistent vs construction-sensitive when varying the relative threshold gap <span className="mono">REL_TOL</span> between 0.5% and 2.0%.
+        <p className="section-lead">
+          For the chosen pair: the protocol v2 label of each metric, how many of the {K} densities had A &gt; B, A &lt; B or a negligible gap (under {relTolPct}), and the frozen v1 label of the same metric (raw values for strength and |w|).
         </p>
-        <DataTable data={tolerance} columns={toleranceColumns} pageSize={15} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
+          <label htmlFor="pair-select" style={{ fontSize: '0.85rem', fontWeight: 600 }}>Pair:</label>
+          <select id="pair-select" className="select-input" value={pairKey} onChange={(e) => setPairKey(e.target.value)}>
+            {pairs.map((p) => <option key={p.key} value={p.key}>{p.title}</option>)}
+          </select>
+          {selectedPair && <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>A = first ID, B = second ID</span>}
+        </div>
+        {labelsV2 && labelsV1 ? <DataTable data={detailRows} columns={detailColumns} pageSize={15} /> : <div>Loading…</div>}
+        <p className="chart-source" style={{ marginTop: '0.5rem' }}>Data source: <code>replication_labels_v2.json</code>, <code>replication_labels_v1.json</code></p>
       </section>
 
-      {/* Baseline Network Structure Table */}
-      <section>
-        <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.75rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Database size={20} style={{ color: 'var(--accent-blue)' }} />
-          Baseline Structure at d = 0.15 & Per-Subject Scale Variation
+      {/* Tolerance table */}
+      <section style={{ marginBottom: '2.5rem' }}>
+        <h2 className="section-title">
+          <Sliders size={20} style={{ color: 'var(--accent-blue)' }} />
+          Tolerance check (table)
         </h2>
-        <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-          Structural variations across all 10 individuals at d = 0.15, documenting isolated node count, largest component size (LCC), negative edge ratio, and whole-matrix mean |w|.
+        <p className="section-lead">
+          Number of pairs labelled setting-consistent or construction-sensitive when the minimum gap is {tolerances.map((t) => `${t * 100}%`).join(', ') || PENDING}.
         </p>
-        <DataTable data={structure} columns={structureColumns} pageSize={10} />
+        {toleranceData ? <DataTable data={tolerance} columns={toleranceColumns} pageSize={15} /> : <div>Loading…</div>}
       </section>
+
+      {/* Structure across pairs */}
+      <section>
+        <h2 className="section-title">
+          <Database size={20} style={{ color: 'var(--accent-blue)' }} />
+          Structure across pairs at the primary density and per-subject scale
+        </h2>
+        <div className="grid-2">
+          <ChartCard
+            title={`Isolated nodes at the primary density range from ${isoMin} to ${isoMax} across the 10 subjects`}
+            caption={<>Isolated nodes (no kept edge) for the two subjects of each pair at the primary density. <DirectionNote /></>}
+            sources={['replication_structure_d015.json']}
+            minWidth={420}
+          >
+            {structureData && pairs.length ? <IsolatedPerPair rows={structure} pairs={pairs} /> : <div style={{ height: 320 }}>Loading chart…</div>}
+          </ChartCard>
+          <ChartCard
+            title={`Whole-matrix mean |w| ranges from ${scaleMin} to ${scaleMax} across the 10 subjects`}
+            caption={<>Each point is one subject&apos;s mean |w| over all node pairs. Because this overall scale differs so much between people, raw strength and |w| differences partly reflect scale; protocol v2 divides them by each subject&apos;s own mean |w|.</>}
+            sources={['replication_structure_d015.json']}
+            minWidth={420}
+          >
+            {structureData && pairs.length ? <ScalePerSubject rows={structure} pairs={pairs} /> : <div style={{ height: 320 }}>Loading chart…</div>}
+          </ChartCard>
+        </div>
+        {structureData ? <DataTable data={structure} columns={structureColumns} pageSize={10} /> : <div>Loading…</div>}
+      </section>
+
     </div>
   );
 };
