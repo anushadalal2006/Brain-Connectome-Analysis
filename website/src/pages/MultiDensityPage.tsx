@@ -353,7 +353,7 @@ export const MultiDensityPage: React.FC = () => {
           Global-to-Local Association
         </h2>
         <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-          Identifies <strong>nodes whose change goes together with the global difference</strong> across the six densities. This establishes descriptive co-occurrence and statistical association, not mathematical causality.
+          Identifies <strong>nodes whose change goes together with the global difference</strong> across the six densities. This is descriptive co-occurrence across densities, not a causal link.
         </p>
 
         <div className="card" style={{ marginBottom: '1.5rem' }}>
@@ -395,7 +395,7 @@ export const MultiDensityPage: React.FC = () => {
         <div className="card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
             <h3 style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-              Diagnostic G2L Panels
+              Global-to-Local Figure Panels
             </h3>
             <select
               value={selectedG2LFig}
@@ -431,7 +431,7 @@ export const MultiDensityPage: React.FC = () => {
       {/* Heatmaps and Retention Overview */}
       <section>
         <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem', color: 'var(--text-primary)' }}>
-          Heatmaps & Retention Diagnostics
+          Heatmaps, Profiles & Retention Figures
         </h2>
 
         <div className="grid-2" style={{ marginBottom: '1.5rem' }}>

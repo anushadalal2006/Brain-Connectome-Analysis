@@ -55,7 +55,7 @@ export const LimitationsPage: React.FC = () => {
     {
       num: 4,
       title: 'Subject-Specific Scale Effects in Netmats1',
-      desc: 'Weights are HCP netmats1 r-to-Z statistics from FSLNets (Gaussianised r) with subject-specific variance. Raw strength and weight differences (mean_strength, mean_abs_weight, d_w) reflect whole-matrix scaling; they must be interpreted alongside normalized metrics.',
+      desc: 'Weights are HCP netmats1 r-to-Z statistics from FSLNets (Gaussianised r) with subject-specific variance. Raw strength and weight differences (mean_strength, mean_abs_weight) reflect whole-matrix scaling; they must be interpreted alongside normalized metrics.',
     },
     {
       num: 5,
@@ -79,8 +79,8 @@ export const LimitationsPage: React.FC = () => {
     },
     {
       num: 9,
-      title: 'Global-to-Local Represents Association, Not Causation',
-      desc: 'Global-to-Local tables identify nodes whose metric changes go together with a global network difference. This demonstrates observational co-occurrence and statistical association, not mathematical causality.',
+      title: 'Global-to-Local Shows Co-occurrence, Not a Causal Link',
+      desc: 'Global-to-Local tables identify nodes whose metric changes go together with a global network difference. It shows descriptive co-occurrence across the six densities only; it does not establish a causal link.',
     },
     {
       num: 10,

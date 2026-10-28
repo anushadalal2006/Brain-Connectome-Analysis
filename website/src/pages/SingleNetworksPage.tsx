@@ -256,7 +256,7 @@ export const SingleNetworksPage: React.FC = () => {
       {/* Static Figures (Matrices, Traversal levels, Bellman-Ford status) */}
       <section>
         <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem', color: 'var(--text-primary)' }}>
-          Exported Figures & Diagnostic Panels
+          Exported Notebook Figures
         </h2>
 
         <div className="grid-2" style={{ marginBottom: '1.5rem' }}>

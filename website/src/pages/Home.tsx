@@ -239,7 +239,7 @@ export const Home: React.FC = () => {
               In connectomics, brain networks are frequently constructed by applying an arbitrary threshold to correlation matrices. However, differences observed at one threshold may disappear or reverse at another.
             </p>
             <p>
-              This project investigates setting sensitivity by testing five subject pairs across six proportional densities (0.05 to 0.30) using rigorous graph theory without machine learning or discarding negative connections. Every global discrepancy is linked to local node and edge alterations, with the settings ID and provenance recorded with every result.
+              This project investigates setting sensitivity by testing five subject pairs across six proportional densities (0.05 to 0.30) using graph theory without machine learning or discarding negative connections. Every global discrepancy is linked to local node and edge alterations, with the settings ID and provenance recorded with every result.
             </p>
           </div>
         </div>
