@@ -21,15 +21,15 @@ export const Navbar: React.FC = () => {
 
   return (
     <nav className="navbar">
-      <div className="container nav-container">
+      <div className="container nav-container" style={{ maxWidth: 1440 }}>
         <NavLink to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--text-primary)', textDecoration: 'none' }}>
           <Activity size={24} style={{ color: 'var(--accent-blue)' }} />
           <div>
-            <span style={{ fontWeight: 700, fontSize: '1.05rem', letterSpacing: '-0.02em', display: 'block', lineHeight: 1.2 }}>
+            <span className="nav-title">
               Brain Connectome Analysis
             </span>
-            <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block' }}>
-              Graph-Theoretic • No ML • HCP S1200
+            <span className="nav-subtitle">
+              Graph-based · No ML · HCP S1200
             </span>
           </div>
         </NavLink>
@@ -97,12 +97,14 @@ export const Navbar: React.FC = () => {
 
       {/* Desktop navigation CSS override */}
       <style>{`
-        @media (min-width: 1040px) {
+        @media (min-width: 1240px) {
           #desktop-nav { display: flex !important; }
           #mobile-toggle { display: none !important; }
         }
-        @media (max-width: 1039px) {
+        @media (max-width: 1239px) {
           #mobile-toggle { display: inline-flex !important; }
+        }
+        @media (max-width: 1499px) {
           .hide-sm { display: none; }
         }
       `}</style>
