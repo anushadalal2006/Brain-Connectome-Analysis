@@ -337,15 +337,15 @@ export const ComparisonPage: React.FC = () => {
 
         <div className="grid-2">
           <div className="figure-wrapper">
-            <img src={`${import.meta.env.BASE_URL}figures/AB_degree_strength.png`} alt="Node Degree vs Strength Comparison" />
+            <img src={`${import.meta.env.BASE_URL}figures/AB_degree_strength.png`} alt="Degree and signed strength distributions for A and B" />
             <div className="figure-caption">
-              <strong>Figure AB3:</strong> Node degree vs signed strength comparison between Subject A and Subject B.
+              <strong>Figure AB3:</strong> Degree and signed-strength distributions for Subject A and Subject B at the primary density.
             </div>
           </div>
           <div className="figure-wrapper">
-            <img src={`${import.meta.env.BASE_URL}figures/AB_weight_difference.png`} alt="Weight Difference Distribution" />
+            <img src={`${import.meta.env.BASE_URL}figures/AB_weight_difference.png`} alt="Weight difference matrices, raw and normalised" />
             <div className="figure-caption">
-              <strong>Figure AB4:</strong> Distribution of edge weight differences (A − B) across the {mCount} retained edges.
+              <strong>Figure AB4:</strong> Weight-difference matrices over all node pairs: raw W_A − W_B (left) and after dividing each matrix by its mean |w| (right).
             </div>
           </div>
         </div>
